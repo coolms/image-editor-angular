@@ -1,0 +1,78 @@
+<div class="top-toolbar">
+    <div class="top-toolbar__group">
+        <button type="button"
+                class="top-toolbar__btn"
+                [disabled]="!state.canUndo()"
+                (click)="undo()"
+                title="Undo">
+            <i class="bi bi-arrow-counterclockwise"></i>
+        </button>
+        <button type="button"
+                class="top-toolbar__btn"
+                [disabled]="!state.canRedo()"
+                (click)="redo()"
+                title="Redo">
+            <i class="bi bi-arrow-clockwise"></i>
+        </button>
+    </div>
+
+    <div class="top-toolbar__separator"></div>
+
+    <div class="top-toolbar__group">
+        <button type="button"
+                class="top-toolbar__btn"
+                [disabled]="!state.canUndo()"
+                (click)="reset()"
+                title="Reset all changes">
+            <i class="bi bi-arrow-counterclockwise"></i>
+            <span>Reset</span>
+        </button>
+    </div>
+
+    <div class="top-toolbar__separator"></div>
+
+    <div class="top-toolbar__group">
+        <button type="button"
+                class="top-toolbar__btn"
+                [class.top-toolbar__btn--active]="state.handToolActive()"
+                [disabled]="!state.isReady()"
+                (click)="state.toggleHandTool()"
+                title="Hand tool — drag to pan the image">
+            <i class="bi bi-hand-index"></i>
+        </button>
+    </div>
+
+    <div class="top-toolbar__separator"></div>
+
+    <div class="top-toolbar__group">
+        <button type="button"
+                class="top-toolbar__btn"
+                [disabled]="!state.isReady()"
+                (click)="state.zoomOut()"
+                title="Zoom out">
+            <i class="bi bi-zoom-out"></i>
+        </button>
+        <button type="button"
+                class="top-toolbar__btn top-toolbar__btn--zoom-display"
+                [disabled]="!state.isReady()"
+                (click)="state.resetZoom()"
+                title="Reset zoom to 100%">
+            {{ (state.currentZoom() * 100).toFixed(0) }}%
+        </button>
+        <button type="button"
+                class="top-toolbar__btn"
+                [disabled]="!state.isReady()"
+                (click)="state.zoomIn()"
+                title="Zoom in">
+            <i class="bi bi-zoom-in"></i>
+        </button>
+    </div>
+
+    <div class="top-toolbar__spacer"></div>
+
+    @if (state.canvasSize(); as size) {
+        <div class="top-toolbar__info">
+            {{ size.width }} &times; {{ size.height }}
+        </div>
+    }
+</div>

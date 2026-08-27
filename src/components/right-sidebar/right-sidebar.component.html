@@ -1,0 +1,100 @@
+<aside class="right-sidebar">
+    <header class="right-sidebar__header">
+        <h3 class="right-sidebar__title">Tools</h3>
+    </header>
+
+    <div class="right-sidebar__tools">
+        @if (transformTools().length > 0) {
+            <section class="tool-category">
+                <h4 class="tool-category__label">Transform</h4>
+                <div class="tool-category__buttons">
+                    @for (tool of transformTools(); track tool.id) {
+                        <button type="button"
+                                class="tool-button"
+                                [class.tool-button--active]="isActive(tool.id)"
+                                [disabled]="!state.isReady()"
+                                [title]="tool.label"
+                                (click)="selectTool(tool.id)">
+                            <i class="bi" [class]="tool.icon"></i>
+                            <span class="tool-button__label">{{ tool.label }}</span>
+                        </button>
+                    }
+                </div>
+            </section>
+        }
+
+        @if (insertTools().length > 0) {
+            <section class="tool-category">
+                <h4 class="tool-category__label">Insert</h4>
+                <div class="tool-category__buttons">
+                    @for (tool of insertTools(); track tool.id) {
+                        <button type="button"
+                                class="tool-button"
+                                [class.tool-button--active]="isActive(tool.id)"
+                                [disabled]="!state.isReady()"
+                                [title]="tool.label"
+                                (click)="selectTool(tool.id)">
+                            <i class="bi" [class]="tool.icon"></i>
+                            <span class="tool-button__label">{{ tool.label }}</span>
+                        </button>
+                    }
+                </div>
+            </section>
+        }
+
+        @if (filterTools().length > 0) {
+            <section class="tool-category">
+                <h4 class="tool-category__label">Filters</h4>
+                <div class="tool-category__buttons">
+                    @for (tool of filterTools(); track tool.id) {
+                        <button type="button"
+                                class="tool-button"
+                                [class.tool-button--active]="isActive(tool.id)"
+                                [disabled]="!state.isReady()"
+                                [title]="tool.label"
+                                (click)="selectTool(tool.id)">
+                            <i class="bi" [class]="tool.icon"></i>
+                            <span class="tool-button__label">{{ tool.label }}</span>
+                        </button>
+                    }
+                </div>
+            </section>
+        }
+
+        @if (layersTools().length > 0) {
+            <section class="tool-category">
+                <h4 class="tool-category__label">Layers</h4>
+                <div class="tool-category__buttons">
+                    @for (tool of layersTools(); track tool.id) {
+                        <button type="button"
+                                class="tool-button"
+                                [class.tool-button--active]="isActive(tool.id)"
+                                [disabled]="!state.isReady()"
+                                [title]="tool.label"
+                                (click)="selectTool(tool.id)">
+                            <i class="bi" [class]="tool.icon"></i>
+                            <span class="tool-button__label">{{ tool.label }}</span>
+                        </button>
+                    }
+                </div>
+            </section>
+        }
+    </div>
+
+    @if (activeTool(); as active) {
+        <div class="right-sidebar__properties">
+            <header class="properties-header">
+                <h4 class="properties-header__title">{{ active.label }}</h4>
+                <button type="button"
+                        class="properties-header__close"
+                        aria-label="Close tool"
+                        (click)="deactivateTool()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </header>
+            <div class="properties-body">
+                <ng-container *ngComponentOutlet="active.component; inputs: active.inputs"></ng-container>
+            </div>
+        </div>
+    }
+</aside>

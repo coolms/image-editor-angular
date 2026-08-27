@@ -1,0 +1,80 @@
+<div class="image-editor-host">
+    <header class="image-editor-host__header">
+        <div class="image-editor-host__title">
+            <i class="bi bi-image"></i>
+            <span class="image-editor-host__filename">{{ filename() }}</span>
+            @if (dimensionsLabel() !== '') {
+                <span class="image-editor-host__dimensions">{{ dimensionsLabel() }}</span>
+            }
+        </div>
+        <div class="image-editor-host__header-actions">
+            <button type="button"
+                    class="image-editor-host__icon-btn"
+                    [attr.aria-pressed]="isFullscreen()"
+                    [attr.aria-label]="isFullscreen() ? 'Exit fullscreen' : 'Enter fullscreen'"
+                    [attr.title]="isFullscreen() ? 'Exit fullscreen' : 'Fullscreen'"
+                    (click)="toggleFullscreen()">
+                <i class="bi"
+                   [class.bi-fullscreen]="!isFullscreen()"
+                   [class.bi-fullscreen-exit]="isFullscreen()"></i>
+            </button>
+            <button type="button"
+                    class="image-editor-host__icon-btn image-editor-host__close"
+                    aria-label="Close"
+                    [disabled]="!canClose()"
+                    (click)="onCancel()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="image-editor-host__body">
+        @if (resolvedSourceUrl(); as src) {
+            <coolms-image-editor
+                [sourceUrl]="src"
+                [sourceFilename]="filename()"
+                (engineReady)="onEngineReady($event)"
+                (failed)="onShellError($event)" />
+        }
+
+        @if (state() === 'preparing') {
+            <div class="image-editor-host__overlay">
+                <span>Loading&hellip;</span>
+            </div>
+        }
+        @if (state() === 'saving') {
+            <div class="image-editor-host__overlay">
+                <span>Saving&hellip;</span>
+            </div>
+        }
+        @if (state() === 'error' && errorMessage() !== null) {
+            <div class="image-editor-host__overlay image-editor-host__overlay--error">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span>{{ errorMessage() }}</span>
+            </div>
+        }
+    </div>
+
+    <footer class="image-editor-host__footer">
+        <button type="button"
+                class="cms-btn"
+                [disabled]="!canClose()"
+                (click)="onCancel()">
+            Cancel
+        </button>
+        <div class="image-editor-host__actions">
+            <button type="button"
+                    class="cms-btn"
+                    [disabled]="!canSaveAs()"
+                    (click)="onSaveAs()">
+                Save as&hellip;
+            </button>
+            <button type="button"
+                    class="cms-btn cms-btn-primary"
+                    [disabled]="!canSave()"
+                    (click)="onSave()">
+                {{ isSaving() ? 'Saving…' : 'Save' }}
+            </button>
+        </div>
+    </footer>
+</div>

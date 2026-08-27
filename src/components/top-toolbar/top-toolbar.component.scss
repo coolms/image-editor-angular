@@ -1,0 +1,91 @@
+/* CMS tokens used directly. The project doesn't define a spacing
+ * scale, so px values are the established convention (see styles.scss
+ * for prior art on .cms-btn / .cms-dialog-header). */
+.top-toolbar {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 0 14px;
+    background: var(--cms-bg);
+    border-bottom: 1px solid var(--cms-border);
+    gap: 8px;
+    flex-shrink: 0;
+
+    &__group {
+        display: flex;
+        gap: 4px;
+    }
+
+    &__separator {
+        width: 1px;
+        height: 24px;
+        background: var(--cms-border);
+        margin: 0 4px;
+    }
+
+    &__spacer {
+        flex: 1;
+    }
+
+    &__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: var(--cms-radius);
+        color: var(--cms-text);
+        cursor: pointer;
+        font-size: .8125rem;
+        line-height: 1.5;
+        transition: background .1s, border-color .1s, color .1s;
+
+        .bi { font-size: .9375rem; line-height: 1; }
+
+        &:hover:not(:disabled) {
+            background: var(--cms-btn-hover-bg);
+            border-color: var(--cms-btn-hover-border);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--cms-accent);
+            outline-offset: 1px;
+        }
+
+        &:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+    }
+
+    &__info {
+        font-size: .75rem;
+        color: var(--cms-text-muted);
+        font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+        padding: 2px 8px;
+        background: var(--cms-border-light);
+        border-radius: var(--cms-radius-sm);
+    }
+
+    &__btn--zoom-display {
+        min-width: 56px;
+        justify-content: center;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: 'tnum';
+    }
+
+    /* Active state for toggle-style toolbar buttons (Hand tool).
+     * Mirrors the right-sidebar's `tool-button--active` look so the
+     * "current mode" affordance is consistent across the editor. */
+    &__btn--active {
+        background: var(--cms-accent-light);
+        border-color: var(--cms-accent);
+        color: var(--cms-accent-text);
+
+        &:hover:not(:disabled) {
+            background: var(--cms-accent-light);
+            border-color: var(--cms-accent);
+        }
+    }
+}

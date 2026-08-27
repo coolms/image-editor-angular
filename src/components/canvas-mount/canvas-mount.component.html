@@ -1,0 +1,15 @@
+<div class="canvas-mount">
+    @if (state.state() === 'loading') {
+        <div class="canvas-mount__overlay">
+            <span>Loading image&hellip;</span>
+        </div>
+    }
+    @if (state.state() === 'error') {
+        <div class="canvas-mount__overlay canvas-mount__overlay--error">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span>{{ state.errorMessage() ?? 'Editor failed to load' }}</span>
+        </div>
+    }
+
+    <div #container class="canvas-mount__container"></div>
+</div>

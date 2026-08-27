@@ -1,0 +1,32 @@
+<div class="slider-filter">
+    <h5 class="slider-filter__heading">{{ config().label }}</h5>
+
+    <div class="slider-filter__slider-row">
+        <input type="range"
+               class="slider-filter__slider"
+               [min]="config().min"
+               [max]="config().max"
+               [step]="config().step"
+               [value]="currentValue()"
+               (input)="onSliderInput($any($event.target).valueAsNumber)">
+        <code class="slider-filter__value">{{ currentValue().toFixed(2) }}</code>
+    </div>
+
+    <div class="slider-filter__actions">
+        <button type="button"
+                class="cms-btn"
+                title="Reset to default"
+                [disabled]="!isDirty()"
+                (click)="reset()">
+            <i class="bi bi-arrow-counterclockwise"></i>
+            <span>Reset</span>
+        </button>
+        <button type="button"
+                class="cms-btn"
+                (click)="cancel()">Cancel</button>
+        <button type="button"
+                class="cms-btn cms-btn-primary"
+                [disabled]="!isDirty()"
+                (click)="applyAndCommit()">Apply</button>
+    </div>
+</div>

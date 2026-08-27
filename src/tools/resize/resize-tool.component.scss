@@ -1,0 +1,119 @@
+.resize-tool {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    &__field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    &__label {
+        font-size: .6875rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: var(--cms-text-muted);
+    }
+
+    &__input-row {
+        display: flex;
+        align-items: stretch;
+        border: 1px solid var(--cms-btn-border);
+        border-radius: var(--cms-radius);
+        background: var(--cms-surface);
+        overflow: hidden;
+
+        &:focus-within {
+            border-color: var(--cms-accent);
+            /* Accent at 15% alpha — matches the focus-ring pattern
+             * used across the project's main styles.scss
+             * (.cms-input, .cms-select, .form-control etc.). When
+             * promoted to a `--cms-accent-focus-ring` token at the
+             * project level, this rule follows automatically. */
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--cms-accent) 15%, transparent);
+        }
+    }
+
+    &__input {
+        flex: 1;
+        min-width: 0;
+        padding: 5px 10px;
+        border: none;
+        background: transparent;
+        color: var(--cms-text);
+        font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+        font-size: .8125rem;
+
+        &:focus { outline: none; }
+
+        /* Hide spin buttons — the +/- arrows aren't useful at the precision we want. */
+        appearance: textfield;
+        -moz-appearance: textfield;
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+
+    &__unit {
+        align-self: center;
+        padding: 0 10px;
+        font-size: .75rem;
+        color: var(--cms-text-muted);
+        background: var(--cms-border-light);
+        border-left: 1px solid var(--cms-border-light);
+    }
+
+    &__lock {
+        align-self: center;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        font-size: .75rem;
+        font-weight: 500;
+        background: var(--cms-btn-bg);
+        border: 1px solid var(--cms-btn-border);
+        border-radius: var(--cms-radius);
+        color: var(--cms-btn-text);
+        cursor: pointer;
+        transition: background .1s, border-color .1s, color .1s;
+
+        > .bi { font-size: .9375rem; line-height: 1; }
+
+        &:hover:not(:disabled) {
+            background: var(--cms-btn-hover-bg);
+            border-color: var(--cms-btn-hover-border);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--cms-accent);
+            outline-offset: 1px;
+        }
+
+        &--active {
+            background: var(--cms-accent-light);
+            border-color: var(--cms-accent);
+            color: var(--cms-accent-text);
+        }
+    }
+
+    &__info {
+        margin: 0;
+        font-size: .75rem;
+        color: var(--cms-text-muted);
+        font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    }
+
+    &__actions {
+        display: flex;
+        gap: 6px;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        padding-top: 8px;
+        border-top: 1px solid var(--cms-border-light);
+    }
+}

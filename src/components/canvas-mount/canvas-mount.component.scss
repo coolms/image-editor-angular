@@ -1,0 +1,91 @@
+/* The component HOST is what sits inside the shell's flex row, so
+ * the flex-grow / min-width rules belong here, not on the inner
+ * `.canvas-mount` div. Without this the host defaults to inline-ish
+ * layout and the canvas collapses to width 0, leaving the sidebar
+ * pushed to the left edge of the body — caught during browser
+ * smoke (β.7), the static type system can't see it. */
+:host {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    position: relative;
+    /* Hand-tool cursor states. The component sets two host classes
+     * driven by `state.handToolActive()` and the local `isPanning`
+     * flag; the panning class wins because it's a more specific
+     * "right now" indicator. */
+    &.canvas-mount-host--hand    { cursor: grab; }
+    &.canvas-mount-host--panning { cursor: grabbing; }
+}
+
+/* The canvas backdrop is intentionally darker than the surface tokens
+ * so the image's edges read clearly against it. Driven by the
+ * `--cms-canvas-bg` token so a future CMS theme switch can flip it
+ * (e.g., light theme could use a soft grey instead of near-black)
+ * without touching this component. */
+.canvas-mount {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    background: var(--cms-canvas-bg);
+    overflow: hidden;
+
+    &__container {
+        position: absolute;
+        inset: 0;
+        /* Centre the fabric canvas wrapper within our viewport.
+         * The fabric adapter sizes the canvas backstore to viewport
+         * dimensions via setCanvasDimensions, so the wrapper
+         * naturally fills this container; flex centring keeps the
+         * canvas pinned to the middle if the wrapper ever ends up
+         * smaller than the container (e.g., during a transient
+         * resize cycle before the next setCanvasDimensions). */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        /* Checkered transparency pattern. Standard image-editor
+         * convention: any pixel transparent in the source image
+         * reveals this pattern, signalling alpha to the user. The
+         * pattern also fills the area outside the canvas wrapper
+         * (when canvas is narrower than the viewport), so the
+         * editor reads as a "transparent surface tool" rather than
+         * having a flat colour bleed through. fabric's canvas is
+         * transparent by default so alpha pixels in the loaded
+         * image render this through automatically. */
+        background-image:
+            linear-gradient(45deg,  var(--cms-checker-light) 25%, transparent 25%),
+            linear-gradient(-45deg, var(--cms-checker-light) 25%, transparent 25%),
+            linear-gradient(45deg,  transparent 75%, var(--cms-checker-light) 75%),
+            linear-gradient(-45deg, transparent 75%, var(--cms-checker-light) 75%);
+        background-size: 20px 20px;
+        background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+    }
+
+    &__overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: var(--cms-overlay-scrim);
+        /* Fixed white — the scrim is dark by design (loading /
+         * error legibility), so the contrast pair stays constant
+         * regardless of the surrounding theme. Promoting this to a
+         * token would create a coupling that breaks if the scrim
+         * ever flips light. */
+        color: var(--cms-text-inverse);
+        font-size: .9375rem;
+
+        > i { font-size: 1.125rem; }
+
+        &--error {
+            background: var(--cms-surface);
+            color: var(--cms-danger);
+            flex-direction: column;
+            text-align: center;
+            padding: 24px;
+        }
+    }
+}

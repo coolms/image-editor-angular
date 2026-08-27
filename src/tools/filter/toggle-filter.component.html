@@ -1,0 +1,19 @@
+<div class="toggle-filter">
+    <h5 class="toggle-filter__heading">{{ config().label }}</h5>
+
+    <button type="button"
+            class="toggle-filter__btn"
+            [class.toggle-filter__btn--active]="isApplied()"
+            [disabled]="!state.isReady()"
+            (click)="toggle()">
+        <i class="bi" [class]="config().icon"></i>
+        <span class="toggle-filter__btn-label">{{ buttonLabel() }}</span>
+        @if (isApplied()) {
+            <i class="bi bi-check-lg toggle-filter__check"></i>
+        }
+    </button>
+
+    <div class="toggle-filter__actions">
+        <button type="button" class="cms-btn" (click)="closeTool()">Close</button>
+    </div>
+</div>

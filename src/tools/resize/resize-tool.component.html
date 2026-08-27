@@ -1,0 +1,58 @@
+<div class="resize-tool">
+    <div class="resize-tool__field">
+        <label class="resize-tool__label" for="resize-width">Width</label>
+        <div class="resize-tool__input-row">
+            <input id="resize-width"
+                   type="number"
+                   class="resize-tool__input"
+                   min="1"
+                   [value]="targetWidth()"
+                   (change)="onWidthChange($any($event.target).valueAsNumber)">
+            <span class="resize-tool__unit">px</span>
+        </div>
+    </div>
+
+    <button type="button"
+            class="resize-tool__lock"
+            [class.resize-tool__lock--active]="aspectLocked()"
+            [title]="aspectLocked() ? 'Aspect ratio locked' : 'Aspect ratio unlocked'"
+            (click)="toggleAspectLock()">
+        <i class="bi" [class]="aspectLocked() ? 'bi-link-45deg' : 'bi-unlock'"></i>
+        <span class="resize-tool__lock-label">{{ aspectLocked() ? 'Locked' : 'Free' }}</span>
+    </button>
+
+    <div class="resize-tool__field">
+        <label class="resize-tool__label" for="resize-height">Height</label>
+        <div class="resize-tool__input-row">
+            <input id="resize-height"
+                   type="number"
+                   class="resize-tool__input"
+                   min="1"
+                   [value]="targetHeight()"
+                   (change)="onHeightChange($any($event.target).valueAsNumber)">
+            <span class="resize-tool__unit">px</span>
+        </div>
+    </div>
+
+    <p class="resize-tool__info">
+        Original: {{ originalView().width }} &times; {{ originalView().height }} px
+    </p>
+
+    <div class="resize-tool__actions">
+        <button type="button"
+                class="cms-btn"
+                title="Reset to original size"
+                [disabled]="!isDirty()"
+                (click)="reset()">
+            <i class="bi bi-arrow-counterclockwise"></i>
+            <span>Reset</span>
+        </button>
+        <button type="button"
+                class="cms-btn"
+                (click)="cancel()">Cancel</button>
+        <button type="button"
+                class="cms-btn cms-btn-primary"
+                [disabled]="!canApply()"
+                (click)="applyResize()">Apply</button>
+    </div>
+</div>

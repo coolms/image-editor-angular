@@ -1,0 +1,164 @@
+/* Dialog frame styles. Mirrors the legacy host's outer dimensions so
+ * the visual swap from `ImageEditorHostComponent` to this one is
+ * imperceptible to the author — same screen real estate, same chrome. */
+:host {
+    display: flex;
+    flex-direction: column;
+    width: 95vw;
+    max-width: 1600px;
+    height: 90vh;
+    max-height: 900px;
+    background: var(--cms-surface);
+    border-radius: var(--cms-radius-lg);
+    overflow: hidden;
+}
+
+/*
+ * Fullscreen mode — mirrors the viewer-modal CSS-only pattern.
+ * Toggled by the header Fullscreen button or by dblclicking a
+ * non-interactive area of the dialog (canvas + controls are
+ * excluded by the host's dblclick guard). ESC exits via the
+ * EscCoordinator stack registered in the host constructor.
+ */
+:host.image-editor-host--fullscreen {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+}
+
+.image-editor-host {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.image-editor-host__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--cms-border);
+    flex-shrink: 0;
+}
+
+.image-editor-host__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--cms-text);
+    font-size: .9375rem;
+    min-width: 0;
+
+    > i { color: var(--cms-text-muted); }
+}
+
+.image-editor-host__filename {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.image-editor-host__dimensions {
+    color: var(--cms-text-muted);
+    font-size: .75rem;
+    padding: 1px 8px;
+    background: var(--cms-border-light);
+    border-radius: var(--cms-radius-sm);
+}
+
+.image-editor-host__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.image-editor-host__icon-btn {
+    border: none;
+    background: transparent;
+    color: var(--cms-text-muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--cms-radius-sm);
+    transition: background .1s, color .1s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover:not(:disabled) {
+        background: var(--cms-border-light);
+        color: var(--cms-text);
+    }
+    &:disabled { opacity: .5; cursor: not-allowed; }
+    &[aria-pressed="true"] {
+        color: var(--cms-text);
+        background: var(--cms-border-light);
+    }
+}
+
+.image-editor-host__close {
+    /* Kept for backward-compat with any external CSS hooks; styling
+     * now comes from .image-editor-host__icon-btn. */
+}
+
+.image-editor-host__body {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    background: var(--cms-bg);
+    overflow: hidden;
+
+    /* Force the embedded shell to fill the body. Without this the
+     * shell's :host { display: block } would still claim its content
+     * size, but it sits inside an `overflow: hidden` flex container
+     * so we need an explicit absolute fill for the canvas mount to
+     * report stable dimensions to fabric.js. */
+    coolms-image-editor {
+        position: absolute;
+        inset: 0;
+        display: block;
+    }
+}
+
+.image-editor-host__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--cms-overlay-scrim);
+    /* Fixed white text — paired with the dark scrim, both are
+     * theme-independent for legibility. See canvas-mount for the
+     * matching rationale. */
+    color: var(--cms-text-inverse);
+    font-size: .9375rem;
+
+    > i { font-size: 1.125rem; }
+
+    &--error {
+        background: var(--cms-surface);
+        color: var(--cms-danger);
+        flex-direction: column;
+        text-align: center;
+        padding: 24px;
+    }
+}
+
+.image-editor-host__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-top: 1px solid var(--cms-border);
+    flex-shrink: 0;
+}
+
+.image-editor-host__actions {
+    display: flex;
+    gap: 8px;
+}

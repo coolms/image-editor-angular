@@ -1,0 +1,38 @@
+{
+    // Build-only tsconfig for ng-packagr. The admin compiles these same sources
+    // through ITS tsconfig (source consumption via a path mapping); this file
+    // exists purely to produce a distributable.
+    //
+    // Peers are named as BUILT output, never as sources: compiling a peer's
+    // sources in would put them outside this package's rootDir (TS6059) and
+    // ship a second copy of that peer to anyone installing both.
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "ES2022",
+        "moduleResolution": "bundler",
+        "lib": ["ES2022", "dom"],
+        "strict": true,
+        "noImplicitOverride": true,
+        "noPropertyAccessFromIndexSignature": false,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "importHelpers": true,
+        "declaration": true,
+        "sourceMap": true,
+        "paths": {
+            "@coolms/ui-angular": [
+                        "../ui-angular/dist"
+            ]
+        }
+    },
+    "angularCompilerOptions": {
+        "compilationMode": "partial",
+        "strictInjectionParameters": true,
+        "strictTemplates": true
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["src/**/*.spec.ts"]
+}

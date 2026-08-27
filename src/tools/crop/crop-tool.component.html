@@ -1,0 +1,22 @@
+<div class="crop-tool">
+    <p class="crop-tool__status">{{ statusMessage() }}</p>
+
+    <div class="crop-tool__section">
+        <h5 class="crop-tool__heading">Aspect ratio</h5>
+        <div class="crop-tool__presets">
+            @for (preset of presets; track preset.id) {
+                <button type="button"
+                        class="crop-tool__preset"
+                        [class.crop-tool__preset--active]="activePresetId() === preset.id"
+                        (click)="selectPreset(preset)">
+                    {{ preset.label }}
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="crop-tool__actions">
+        <button type="button" class="cms-btn" (click)="cancelCrop()">Cancel</button>
+        <button type="button" class="cms-btn cms-btn-primary" (click)="applyCrop()">Apply</button>
+    </div>
+</div>

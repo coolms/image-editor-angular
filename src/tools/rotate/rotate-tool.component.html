@@ -1,0 +1,49 @@
+<div class="rotate-tool">
+    <div class="rotate-tool__section">
+        <h5 class="rotate-tool__heading">Quick rotate</h5>
+        <div class="rotate-tool__presets">
+            <button type="button"
+                    class="cms-btn"
+                    title="Rotate 90° counter-clockwise"
+                    (click)="rotatePreset(-90)">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                <span>90&deg; CCW</span>
+            </button>
+            <button type="button"
+                    class="cms-btn"
+                    title="Rotate 90° clockwise"
+                    (click)="rotatePreset(90)">
+                <i class="bi bi-arrow-clockwise"></i>
+                <span>90&deg; CW</span>
+            </button>
+            <button type="button"
+                    class="cms-btn"
+                    title="Rotate 180°"
+                    (click)="rotatePreset(180)">
+                <i class="bi bi-arrow-repeat"></i>
+                <span>180&deg;</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="rotate-tool__separator"></div>
+
+    <div class="rotate-tool__section">
+        <h5 class="rotate-tool__heading">Free rotation</h5>
+        <div class="rotate-tool__slider-row">
+            <input type="range"
+                   class="rotate-tool__slider"
+                   min="-180" max="180" step="1"
+                   [value]="displayAngle()"
+                   (input)="onSliderInput($any($event.target).valueAsNumber)"
+                   (change)="onSliderChange()">
+            <code class="rotate-tool__angle">{{ currentDisplayAngle() }}&deg;</code>
+        </div>
+
+        <div class="rotate-tool__actions">
+            <button type="button"
+                    class="cms-btn"
+                    (click)="closeTool()">Close</button>
+        </div>
+    </div>
+</div>

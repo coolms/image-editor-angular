@@ -1,0 +1,35 @@
+<div class="flip-tool">
+    <p class="flip-tool__hint">
+        Click a direction to flip the image. Click again to flip back.
+    </p>
+
+    <div class="flip-tool__buttons">
+        <button type="button"
+                class="flip-tool__btn"
+                [class.flip-tool__btn--active]="flippedH()"
+                title="Flip horizontally"
+                (click)="toggleHorizontal()">
+            <i class="bi bi-symmetry-horizontal"></i>
+            <span>Horizontal</span>
+            @if (flippedH()) {
+                <i class="bi bi-check-lg flip-tool__check"></i>
+            }
+        </button>
+
+        <button type="button"
+                class="flip-tool__btn"
+                [class.flip-tool__btn--active]="flippedV()"
+                title="Flip vertically"
+                (click)="toggleVertical()">
+            <i class="bi bi-symmetry-vertical"></i>
+            <span>Vertical</span>
+            @if (flippedV()) {
+                <i class="bi bi-check-lg flip-tool__check"></i>
+            }
+        </button>
+    </div>
+
+    <div class="flip-tool__actions">
+        <button type="button" class="cms-btn" (click)="closeTool()">Close</button>
+    </div>
+</div>
