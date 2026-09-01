@@ -150,8 +150,8 @@ import { extractSvgMaskPath } from './svg-mask.util';
             display: flex; align-items: flex-start; gap: 6px;
             margin: 0; font-size: .75rem; line-height: 1.4;
         }
-        .svg-msg--err { color: var(--cms-danger, #d9534f); }
-        .svg-msg--ok  { color: var(--cms-success, #4f8a4f); }
+        .svg-msg--err { color: var(--cms-danger, #dc2626); }
+        .svg-msg--ok  { color: var(--cms-success, #16a34a); }
     `],
 })
 export class MaskToolComponent {

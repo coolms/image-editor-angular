@@ -24,7 +24,7 @@
     &__value {
         min-width: 52px;
         text-align: right;
-        font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+        font-family: var(--cms-font-mono, monospace);
         font-size: .75rem;
         color: var(--cms-text);
         background: var(--cms-border-light);
