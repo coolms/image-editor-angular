@@ -30,7 +30,18 @@ peers, and none of them is published:
 
 - `@coolms/ui-angular`
 
-This package has a second, independent problem. With `--legacy-peer-deps` the install succeeds and the build still fails on `Cannot find module 'fabric/es'` -- a third-party subpath that does not resolve against the installed version of `fabric`, and nothing to do with the unpublished siblings. Publishing the peers would not fix this one.
+⚠️ **Correction.** An earlier version of this file called
+`Cannot find module 'fabric/es'` a second, independent problem that publishing
+the peers would not fix. That was wrong, in both halves.
+
+`fabric` is a **peer** dependency here, and `--legacy-peer-deps` -- the flag used
+to get past the unpublished `@coolms` peers -- does not install peers at all, so
+the module was simply absent from the tree. `fabric` 7.3.1 declares `./es` in its
+`exports`, so the import is correct, and there was no fabric directory in the
+test tree to resolve it against.
+
+Same cause as the `@coolms` peers, arriving from a third-party package: a plain
+`npm install` installs it. Nothing separate to fix.
 
 A workflow added today would be red on its first run, or would have to be
 written around the failure -- a green check that verifies nothing, which is the
