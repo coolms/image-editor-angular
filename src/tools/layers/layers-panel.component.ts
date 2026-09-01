@@ -90,7 +90,7 @@ import type { LayerInfo } from '../../types/layer.types';
         }
         .icon-btn:hover:not(:disabled) { background: var(--cms-border-light); color: var(--cms-text); }
         .icon-btn:disabled { opacity: .3; cursor: not-allowed; }
-        .icon-btn--danger:hover:not(:disabled) { color: var(--cms-danger, #e5484d); }
+        .icon-btn--danger:hover:not(:disabled) { color: var(--cms-danger, #dc2626); }
     `],
 })
 export class LayersPanelComponent {

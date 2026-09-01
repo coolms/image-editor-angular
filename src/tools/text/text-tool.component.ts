@@ -96,7 +96,7 @@ import { DEFAULT_TEXT_OPTIONS, DEFAULT_FILL_SPEC, TEXT_FONT_FAMILIES } from '../
         .text-tool { display: flex; flex-direction: column; gap: 14px; }
         .add-btn {
             display: flex; align-items: center; justify-content: center; gap: 6px;
-            padding: 9px 12px; background: var(--cms-accent); color: var(--cms-accent-text, #fff);
+            padding: 9px 12px; background: var(--cms-accent); color: var(--cms-accent-fg, #1a1a1a);
             border: 1px solid var(--cms-accent); border-radius: var(--cms-radius);
             font-size: .8125rem; font-weight: 600; cursor: pointer;
         }

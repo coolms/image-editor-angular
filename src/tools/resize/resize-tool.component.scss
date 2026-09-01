@@ -43,7 +43,7 @@
         border: none;
         background: transparent;
         color: var(--cms-text);
-        font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+        font-family: var(--cms-font-mono, monospace);
         font-size: .8125rem;
 
         &:focus { outline: none; }
@@ -105,7 +105,7 @@
         margin: 0;
         font-size: .75rem;
         color: var(--cms-text-muted);
-        font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+        font-family: var(--cms-font-mono, monospace);
     }
 
     &__actions {

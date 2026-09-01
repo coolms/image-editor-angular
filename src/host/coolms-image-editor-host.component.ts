@@ -1,5 +1,5 @@
 import {
-    ChangeDetectionStrategy, Component, HostBinding, HostListener,
+    ChangeDetectionStrategy, Component, DestroyRef, HostBinding, HostListener,
     OnDestroy, OnInit, ViewChild,
     computed, effect, inject, signal,
 } from '@angular/core';
@@ -18,7 +18,7 @@ import {
 } from './coolms-image-editor-host.types';
 import type { ImageEditorEngine } from '../engine/image-editor-engine.interface';
 
-import { EscCoordinatorService, ToastService } from '@coolms/ui-angular';
+import { ConfirmDialogService, EscCoordinatorService, ToastService, UnsavedChangesService } from '@coolms/ui-angular';
 import { ImageEditorHttpService } from '../services/image-editor-http.service';
 
 type HostState = 'preparing' | 'editing' | 'saving' | 'error';
@@ -64,6 +64,9 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
     private readonly toast       = inject(ToastService);
     private readonly http        = inject(HttpClient);
     private readonly esc         = inject(EscCoordinatorService);
+    private readonly confirm     = inject(ConfirmDialogService);
+    private readonly unsaved     = inject(UnsavedChangesService);
+    private readonly destroyRef  = inject(DestroyRef);
 
     protected readonly data = inject<CoolmsImageEditorHostData>(DIALOG_DATA);
 
@@ -163,6 +166,11 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
     }
 
     constructor() {
+        // beforeunload half (#2485): a tab close cannot be intercepted by
+        // the Cancel button. Disposed with the component so a closed editor
+        // stops voting.
+        this.destroyRef.onDestroy(this.unsaved.watch(this, () => this.hasEdits()));
+
         // ESC while fullscreen exits fullscreen. No-op outside
         // fullscreen — the dialog stays open until Close X / Cancel
         // (per Decision 1: editor had no ESC handler before, and
@@ -281,9 +289,32 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
         await this.executeSave('save_as_new', result.filename);
     }
 
+    /**
+     * ⚠️ `canClose()` only ever meant "not mid-save" -- there was no dirty
+     * concept here at all, so a crop, a rotate and three filters were
+     * thrown away by Cancel without a word (#2486).
+     *
+     * `engine.canUndo()` is the dirty flag we would otherwise have had to
+     * invent: it is true exactly when the user has done something undoable,
+     * and it goes back to false if they undo their way to the start.
+     */
     onCancel(): void {
         if (!this.canClose()) return;
-        this.dialogRef.close({ kind: 'cancelled' });
+
+        if (!this.hasEdits()) {
+            this.dialogRef.close({ kind: 'cancelled' });
+
+            return;
+        }
+
+        this.confirm.confirmDiscard(this.filename()).subscribe((discard) => {
+            if (discard) this.dialogRef.close({ kind: 'cancelled' });
+        });
+    }
+
+    /** The engine's undo depth IS "has anything been edited". */
+    private hasEdits(): boolean {
+        return this.engine?.canUndo() ?? false;
     }
 
     private async executeSave(

@@ -62,7 +62,7 @@
     &__info {
         font-size: .75rem;
         color: var(--cms-text-muted);
-        font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+        font-family: var(--cms-font-mono, monospace);
         padding: 2px 8px;
         background: var(--cms-border-light);
         border-radius: var(--cms-radius-sm);
