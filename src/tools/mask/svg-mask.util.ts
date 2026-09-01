@@ -1,5 +1,5 @@
 /**
- * SVG → clip-path geometry extraction for custom masks (C.1d).
+ * SVG -> clip-path geometry extraction for custom masks (C.1d).
  *
  * Accepts either a bare SVG path `d` string or a full SVG document
  * (pasted markup or the text of an uploaded `.svg` file) and returns a

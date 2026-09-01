@@ -229,7 +229,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         // overlay. Applying the crop in image-local coordinates instead
         // would crop an axis-aligned rectangle of the un-rotated image
         // and then re-apply the rotation, producing the diamond-shaped
-        // output reported in the γ.2 smoke (Bug 1).
+        // output reported in the gamma.2 smoke (Bug 1).
         const baked = image.toCanvasElement({ multiplier: 1 });
 
         const ox = Math.max(0, canvasSpaceRect.x - imageBounds.left);
@@ -346,7 +346,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
             cornerStyle:         'circle',
             // Literal on purpose: Fabric paints to a CANVAS, which resolves no
             // CSS custom properties — `var(--cms-text-inverse)` would render as
-            // nothing. A tokenising pass swapped this once (#2025) and it had
+            // nothing. A tokenising pass swapped this once and it had
             // to be put back; keep it a literal, or thread the resolved value
             // through `getComputedStyle` if it ever needs to follow the theme.
             cornerColor:         '#ffffff',
@@ -874,7 +874,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
             points[anchorIndex].y - polygon.pathOffset.y,
         ).transform(polygon.calcTransformMatrix());
 
-        // Scene → object-center-local (v7 dropped toLocalPoint; the
+        // Scene -> object-center-local (v7 dropped toLocalPoint; the
         // inverse of calcTransformMatrix is its center-origin equivalent).
         const local = new Point(x, y).transform(util.invertTransform(polygon.calcTransformMatrix()));
         const size = this.polygonSizeWithStroke(polygon);
@@ -918,7 +918,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         const points = polygon.points ?? [];
         if (points.length < 3) return false;
 
-        // Scene → object-local point-space (mirrors moveVertex).
+        // Scene -> object-local point-space (mirrors moveVertex).
         const local = new Point(sceneX, sceneY).transform(util.invertTransform(polygon.calcTransformMatrix()));
         const size = this.polygonSizeWithStroke(polygon);
         const target = {
@@ -926,7 +926,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
             y: local.y * ((polygon.height ?? 0) / size.y) + polygon.pathOffset.y,
         };
 
-        // Project onto the NEAREST edge (segment i→i+1) and insert the
+        // Project onto the NEAREST edge (segment i->i+1) and insert the
         // projected point after i — a collinear insert, so the polygon's
         // outline is unchanged; it just gains a handle to drag.
         let bestIndex = 0;
@@ -961,7 +961,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         // A polygon needs at least 3 vertices — never remove past that floor.
         if (points.length <= 3) return false;
 
-        // Scene → object-local point-space (mirrors addVertexAt / moveVertex).
+        // Scene -> object-local point-space (mirrors addVertexAt / moveVertex).
         const local = new Point(sceneX, sceneY).transform(util.invertTransform(polygon.calcTransformMatrix()));
         const size = this.polygonSizeWithStroke(polygon);
         const target = {
@@ -1005,7 +1005,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         return true;
     }
 
-    /** Closest point on segment `a→b` to `p` (all object-local coords). */
+    /** Closest point on segment `a->b` to `p` (all object-local coords). */
     private projectOnSegment(p: PointType, a: PointType, b: PointType): PointType {
         const abx = b.x - a.x;
         const aby = b.y - a.y;
@@ -1094,7 +1094,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
     }
 
     getLayers(): LayerInfo[] {
-        // Canvas order is bottom→top; the panel lists top→bottom.
+        // Canvas order is bottom->top; the panel lists top->bottom.
         return this.layerObjects()
             .slice()
             .reverse()
@@ -1442,7 +1442,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
      * relative to the image (both in canvas-space px, multiplier 1).
      *
      * C.1 keeps transforms whole-image, so the common authoring flow
-     * (edit pixels → annotate → save) lands annotations at full
+     * (edit pixels -> annotate -> save) lands annotations at full
      * resolution; a base image the user manually scaled with handles
      * exports at its displayed size (a documented limitation).
      */
@@ -1563,7 +1563,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
             // designed to change zoom while keeping `p` fixed on
             // screen), so we rewrite vt[4]/vt[5] directly: at
             // zoom `s` anchored at canvas centre `(cx, cy)`, the
-            // identity for "vt maps cx,cy → cx,cy on screen" is
+            // identity for "vt maps cx,cy -> cx,cy on screen" is
             // `tx = cx * (1 - s)`, `ty = cy * (1 - s)`.
             const zoom = this.canvas.getZoom();
             const c    = this.canvas.getCenterPoint();
@@ -1981,7 +1981,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         ];
 
         if (spec.type === 'radial') {
-            // Centre → edge ellipse spanning the object box.
+            // Centre -> edge ellipse spanning the object box.
             return new Gradient<'radial'>({
                 type:          'radial',
                 gradientUnits: 'percentage',

@@ -30,7 +30,7 @@ peers, and none of them is published:
 
 - `@coolms/ui-angular`
 
-⚠️ **Correction.** An earlier version of this file called
+ **Correction.** An earlier version of this file called
 `Cannot find module 'fabric/es'` a second, independent problem that publishing
 the peers would not fix. That was wrong, in both halves.
 

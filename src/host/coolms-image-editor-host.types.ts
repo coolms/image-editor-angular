@@ -47,7 +47,7 @@ export interface CoolmsImageEditorMediaContext {
         /** Pre-load dimensions surfaced in the header before the engine reports its own. */
         readonly dimensions:  { readonly width: number; readonly height: number } | null;
     };
-    /** BCP-47 locale; held for future locale work, β.X doesn't read it. */
+    /** BCP-47 locale; held for future locale work, beta.X doesn't read it. */
     readonly locale?: string;
 }
 

@@ -1,16 +1,15 @@
 {
     "name": "@coolms/image-editor-angular",
-    "version": "0.1.0",
+    "version": "2.0.0-alpha.1",
     "description": "Modern image editor for CoolMS DXP — vanilla TypeScript engine adapter, framework-agnostic",
     "license": "MIT",
-    "private": true,
     "type": "module",
     "peerDependencies": {
         "@angular/cdk": "^22.0.0",
         "@angular/common": "^22.0.0",
         "@angular/core": "^22.0.0",
         "@angular/forms": "^22.0.0",
-        "@coolms/ui-angular": "^0.1.0",
+        "@coolms/ui-angular": "^2.0.0-alpha.1",
         "fabric": "^7.3.1",
         "rxjs": "^7.8.0"
     },
@@ -48,5 +47,8 @@
         "tslib": "^2.3.0",
         "typescript": "^6.0.0",
         "typescript-eslint": "^8.33.1"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

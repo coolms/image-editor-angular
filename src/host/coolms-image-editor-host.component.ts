@@ -29,15 +29,15 @@ type HostState = 'preparing' | 'editing' | 'saving' | 'error';
  * Save flow (Phase 1C — discriminated context):
  *
  *   Media context:
- *     Save  → OverwriteConfirm → POST /api/v1/media/{id}/replace
- *     SaveAs → SaveAs prompt   → POST /api/v1/vfs/files/binary (new file under
+ *     Save  -> OverwriteConfirm -> POST /api/v1/media/{id}/replace
+ *     SaveAs -> SaveAs prompt   -> POST /api/v1/vfs/files/binary (new file under
  *                               the source collection; auto-promoted to an asset)
  *
  *   VFS context:
- *     Save  → OverwriteConfirm → POST /api/v1/vfs/files/binary (overwrite=true)
- *     SaveAs → SaveAs prompt   → POST /api/v1/vfs/files/binary (overwrite=false)
+ *     Save  -> OverwriteConfirm -> POST /api/v1/vfs/files/binary (overwrite=true)
+ *     SaveAs -> SaveAs prompt   -> POST /api/v1/vfs/files/binary (overwrite=false)
  *
- *   Cancel → close with `{ kind: 'cancelled' }` in either context.
+ *   Cancel -> close with `{ kind: 'cancelled' }` in either context.
  *
  * Save button gating: in the VFS context, `canWrite=false` disables
  * Save (overwriting a read-only file would 403 anyway) but Save as
@@ -46,7 +46,7 @@ type HostState = 'preparing' | 'editing' | 'saving' | 'error';
  *
  * Failures stay non-fatal: the dialog stays open with state set back
  * to `editing` so the author can retry, and a toast carries a
- * descriptive message (status code → friendly label, or `.message`
+ * descriptive message (status code -> friendly label, or `.message`
  * fallback). The engine remains live throughout.
  */
 @Component({
@@ -166,7 +166,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
     }
 
     constructor() {
-        // beforeunload half (#2485): a tab close cannot be intercepted by
+        // beforeunload half: a tab close cannot be intercepted by
         // the Cancel button. Disposed with the component so a closed editor
         // stops voting.
         this.destroyRef.onDestroy(this.unsaved.watch(this, () => this.hasEdits()));
@@ -208,7 +208,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
             // VFS preview is gated by the stateless API firewall, which only
             // accepts a Bearer token on the Authorization header. Plain
             // <img src> requests don't carry one, so Toast UI's
-            // loadImageFromURL → 401 → "Invalid image loaded.". Fetching
+            // loadImageFromURL -> 401 -> "Invalid image loaded.". Fetching
             // through HttpClient runs the auth interceptor, then we hand
             // the engine a same-origin blob: URL it can render normally.
             // Media URLs are public, so we pass them through unchanged.
@@ -248,7 +248,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
     async onSave(): Promise<void> {
         if (!this.canSave()) return;
 
-        // Warn when transparency forces a JPEG → PNG format change on
+        // Warn when transparency forces a JPEG -> PNG format change on
         // an in-place overwrite (C.1d) so it isn't a silent surprise.
         const willConvertToPng =
             this.contentWantsPng() && this.deriveFormat(this.mimeType(), false) !== 'png';
@@ -290,9 +290,9 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * ⚠️ `canClose()` only ever meant "not mid-save" -- there was no dirty
+     *  `canClose()` only ever meant "not mid-save" -- there was no dirty
      * concept here at all, so a crop, a rotate and three filters were
-     * thrown away by Cancel without a word (#2486).
+     * thrown away by Cancel without a word.
      *
      * `engine.canUndo()` is the dirty flag we would otherwise have had to
      * invent: it is true exactly when the user has done something undoable,
@@ -329,7 +329,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
         try {
             // Drain any in-flight tool so a mid-edit cropper overlay
             // doesn't get baked into the exported pixels (same safety
-            // net as β.4a).
+            // net as beta.4a).
             this.shell?.deactivateActiveTool();
 
             const format = this.deriveFormat(this.mimeType(), engine.hasAlpha());
@@ -358,7 +358,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
         if (mode === 'overwrite') {
             // A transparency-forced PNG of a JPEG source changes the
             // bytes' format; the replace endpoint allows same-major-type
-            // (image/jpeg → image/png) and re-derives the MIME from the
+            // (image/jpeg -> image/png) and re-derives the MIME from the
             // content, so a matching .png name keeps the asset coherent.
             const response = await this.editService.replaceMediaAsset({
                 blob,
@@ -377,7 +377,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
         // new image is created the current way: write it under the source
         // collection's `/media/{collection}/` directory and let the VFS-change
         // listeners auto-promote it to a managed media asset with thumbnails
-        // (#722). It then appears in the grid via the realtime refresh (#723).
+        //. It then appears in the grid via the realtime refresh.
         const finalName = this.ensureExtension(newFilename ?? this.deriveSaveAsName(data.asset.filename), format);
         const targetDir = this.parentDir(data.asset.path ?? null) ?? '/media/uploads';
         const newPath   = this.joinPath(targetDir, finalName);
@@ -455,7 +455,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
      * source) we force PNG, because flattening it onto an opaque JPEG
      * loses the cut-away region to opaque black (the C.1d fix — masked
      * Save-as previously baked black corners). Otherwise it follows the
-     * source MIME (PNG stays PNG, everything else → JPEG, the two formats
+     * source MIME (PNG stays PNG, everything else -> JPEG, the two formats
      * the underlying canvas reliably encodes).
      */
     private deriveFormat(mimeType: string, hasAlpha: boolean): 'png' | 'jpeg' {

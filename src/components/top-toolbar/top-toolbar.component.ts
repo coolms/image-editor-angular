@@ -3,13 +3,13 @@ import { ImageEditorStateService } from '../../services/image-editor-state.servi
 
 /**
  * Action commands for the editor: history (undo / redo), reset, and a
- * read-only image-size badge. β.3 ships these because they are
+ * read-only image-size badge. beta.3 ships these because they are
  * engine-level concerns the shell already exposes via the state
- * service — tool-specific buttons (crop, rotate, etc.) come in β.4.
+ * service — tool-specific buttons (crop, rotate, etc.) come in beta.4.
  *
  * The toolbar talks to the engine through the state service rather
  * than holding its own engine reference; that keeps it interchangeable
- * with whatever β.4 wires up.
+ * with whatever beta.4 wires up.
  */
 @Component({
     selector: 'coolms-image-editor-top-toolbar',

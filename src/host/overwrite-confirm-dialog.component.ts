@@ -4,7 +4,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 interface OverwriteConfirmData {
     readonly filename: string;
     /**
-     * Optional note shown above the actions — e.g. a transparency →
+     * Optional note shown above the actions — e.g. a transparency ->
      * PNG format-change warning on overwrite (C.1d).
      */
     readonly formatNote?: string;

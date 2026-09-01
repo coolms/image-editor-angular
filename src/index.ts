@@ -5,8 +5,8 @@
  * `@coolms/image-editor` only. The barrel keeps the internal file
  * layout reorganisable without breaking downstream imports.
  *
- * Phase β.3 surface: engine + types + shell components + CDK Dialog
- * host. Tools land iteratively in β.4.
+ * surface: engine + types + shell components + CDK Dialog
+ * host. Tools land iteratively in beta.4.
  */
 
 // Engine contract + reference adapter
@@ -32,11 +32,11 @@ export type { FilterName, FilterParams } from './types/filter.types';
 // Engine construction options
 export type { EngineOptions } from './types/engine-options.types';
 
-// Shell components (β.3)
+// Shell components (beta.3)
 export { CoolmsImageEditorComponent } from './components/coolms-image-editor.component';
 export { ImageEditorStateService, type EditorState } from './services/image-editor-state.service';
 
-// CDK Dialog host (β.3)
+// CDK Dialog host (beta.3)
 export { CoolmsImageEditorHostComponent } from './host/coolms-image-editor-host.component';
 export type {
     CoolmsImageEditorHostData,

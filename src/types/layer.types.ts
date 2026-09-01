@@ -56,8 +56,8 @@ export interface AnnotationShapeOptions {
  * How a shape / text layer is filled (C.1b).
  *
  * - `solid`  : a single flat colour.
- * - `linear` : a linear gradient from `color` → `color2` along `angle`.
- * - `radial` : a radial gradient from `color` (centre) → `color2` (edge).
+ * - `linear` : a linear gradient from `color` -> `color2` along `angle`.
+ * - `radial` : a radial gradient from `color` (centre) -> `color2` (edge).
  */
 export type FillType = 'solid' | 'linear' | 'radial';
 
@@ -66,7 +66,7 @@ export type FillType = 'solid' | 'linear' | 'radial';
  * translates this to / from a fabric solid colour or `Gradient`, so the
  * tool components never import fabric. Colours are `#rrggbb` hex (what
  * `<input type="color">` reads / writes); `angle` is in degrees
- * (0 = left→right, 90 = top→bottom) and only meaningful for `linear`.
+ * (0 = left->right, 90 = top->bottom) and only meaningful for `linear`.
  */
 export interface FillSpec {
     type:   FillType;
@@ -140,7 +140,7 @@ export const DEFAULT_FILL_SPEC: FillSpec = {
     type:   'solid',
     color:  DEFAULT_SHAPE_OPTIONS.fill,
     // Literal on purpose — this is a CANVAS fill, not CSS: Fabric resolves no
-    // custom properties, so a `var()` here renders as nothing (#2025).
+    // custom properties, so a `var()` here renders as nothing.
     color2: '#ffffff',
     angle:  0,
 };

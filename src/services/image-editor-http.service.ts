@@ -9,12 +9,12 @@ import { firstValueFrom } from 'rxjs';
  * which one to call based on its own discriminated context (media
  * vs vfs); the service stays a thin wrapper around `HttpClient`.
  *
- *   `replaceMediaAsset`   → `POST /api/v1/media/{id}/replace`
+ *   `replaceMediaAsset`   -> `POST /api/v1/media/{id}/replace`
  *                           (Phase 1A; Media-owned, multipart, replaces
  *                            asset bytes in place, triggers thumbnail
  *                            regeneration).
  *
- *   `writeVfsFile`        → `POST /api/v1/vfs/files/binary`
+ *   `writeVfsFile`        -> `POST /api/v1/vfs/files/binary`
  *                           (Phase 1B; VFS-owned, multipart, write or
  *                            replace at an absolute path; explicit
  *                            `overwrite=true` is required to clobber

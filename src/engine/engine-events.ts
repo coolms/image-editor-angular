@@ -67,7 +67,7 @@ export interface EngineEvents {
      * viewport zoom/pan factored out — the same space `getImageBounds()`
      * and `getShapeGeometry()` report in). The annotation seam for
      * consumers that implement their own draw-by-drag interactions
-     * (e.g. the ImageMap region authoring page): `down`→`move`→`up`
+     * (e.g. the ImageMap region authoring page): `down`->`move`->`up`
      * drives rubber-band shapes, `dblclick` closes polygon paths.
      * `targetLayerId` is the stamped layer under the pointer, or null
      * on empty canvas / when hit-testing is disabled.

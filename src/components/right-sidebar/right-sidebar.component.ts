@@ -9,7 +9,7 @@ import type { ToolMetadata } from '../../tools/tool.types';
 /**
  * Tool-picker pane.
  *
- * Renders the registered tools grouped by category (β.4a ships only
+ * Renders the registered tools grouped by category (beta.4a ships only
  * the `transform` group). The active tool's properties component is
  * mounted into the lower slot via `NgComponentOutlet` — that
  * component's lifecycle (`ngOnInit` / `ngOnDestroy`) drives the
@@ -36,7 +36,7 @@ export class RightSidebarComponent {
         () => this.registry.byCategory('transform'),
     );
 
-    /** Tools to surface in the Filters section (β.4b). */
+    /** Tools to surface in the Filters section (beta.4b). */
     protected readonly filterTools = computed<ToolMetadata[]>(
         () => this.registry.byCategory('filter'),
     );

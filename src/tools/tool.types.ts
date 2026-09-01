@@ -41,7 +41,7 @@ export interface ToolMetadata {
  * deactivation.
  *
  * The right-sidebar wires a tool's lifecycle to its component
- * lifecycle: `ngOnInit` → `onActivate`, `ngOnDestroy` →
+ * lifecycle: `ngOnInit` -> `onActivate`, `ngOnDestroy` ->
  * `onDeactivate`. NgComponentOutlet creates and destroys the
  * properties component when the active tool changes, so this
  * mapping happens for free.

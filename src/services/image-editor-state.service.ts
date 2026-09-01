@@ -23,7 +23,7 @@ export type EditorState = 'uninitialized' | 'loading' | 'ready' | 'error';
  * give each one its own engine, history flags, and active-tool slot.
  *
  * Kept deliberately thin: signals + the methods that mutate them. Tool
- * implementations in β.4 reach the engine through `engine()` rather
+ * implementations in beta.4 reach the engine through `engine()` rather
  * than threading domain logic through this service.
  */
 @Injectable()
@@ -34,7 +34,7 @@ export class ImageEditorStateService {
     readonly canvasSize    = signal<Size | null>(null);
     readonly canUndo       = signal<boolean>(false);
     readonly canRedo       = signal<boolean>(false);
-    /** Tool ID set by the right-sidebar picker. β.3 leaves this null. */
+    /** Tool ID set by the right-sidebar picker. beta.3 leaves this null. */
     readonly activeTool    = signal<string | null>(null);
     readonly errorMessage  = signal<string | null>(null);
     /**

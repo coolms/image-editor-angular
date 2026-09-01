@@ -3,7 +3,7 @@
  * `.canvas-mount` div. Without this the host defaults to inline-ish
  * layout and the canvas collapses to width 0, leaving the sidebar
  * pushed to the left edge of the body — caught during browser
- * smoke (β.7), the static type system can't see it. */
+ * smoke (beta.7), the static type system can't see it. */
 :host {
     display: flex;
     flex: 1 1 0;

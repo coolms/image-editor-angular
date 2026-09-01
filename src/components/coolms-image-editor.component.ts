@@ -82,7 +82,7 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
     private destroyed = false;
 
     constructor() {
-        // Register the β.4a transform tools. The registry is
+        // Register the beta.4a transform tools. The registry is
         // `providedIn: 'root'`, so registering here is idempotent across
         // multiple shell instances — re-registering an id replaces the
         // existing entry, and metadata is identical between instances.
@@ -108,7 +108,7 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
             category:  'transform',
             component: FlipToolComponent,
         });
-        // β.4c: Resize joins the Transform group. Sits last because
+        // beta.4c: Resize joins the Transform group. Sits last because
         // it changes the canvas baseline, which crop/rotate/flip
         // operations are usually run against rather than after.
         registry.register({
@@ -153,7 +153,7 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
             component: LayersPanelComponent,
         });
 
-        // β.4b: Filter tools. The shared SliderFilterComponent and
+        // beta.4b: Filter tools. The shared SliderFilterComponent and
         // ToggleFilterComponent classes back every filter — only the
         // `config` input differs. ToolMetadata's `inputs` map carries
         // the per-filter config, which the right-sidebar pipes

@@ -32,9 +32,9 @@ assemble it.
 
 ## History
 
-Prior to Phase γ (May 3-4, 2026) this package wrapped Toast UI
+Prior to (May 3-4, 2026) this package wrapped Toast UI
 Image Editor in headless mode. Toast UI in turn embedded fabric.js
-v4. Phase γ replaced the Toast UI layer with a direct
+v4. replaced the Toast UI layer with a direct
 `FabricEngineAdapter` against fabric.js v6, and removed the
 `tui-image-editor`, `tui-color-picker`, and `tui-code-snippet`
 dependencies. See `docs/adr/079-toast-ui-rejection.md` for the
