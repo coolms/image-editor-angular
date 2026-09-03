@@ -1,6 +1,6 @@
 # @coolms/image-editor-angular
 
-Modern image editor for CoolMS DXP. Built on fabric.js v6 via a
+Modern image editor for CoolMS. Built on fabric.js v6 via a
 custom `FabricEngineAdapter`, wrapped by a CoolMS-native UI shell.
 
 ## Status
@@ -53,6 +53,16 @@ Slider filters live-preview during drag with a coalesced
 `undo -> applyFilter` cycle so the undo stack stays at one entry per
 preview session. `clearRedoStack()` on commit prevents stale preview
 entries from leaking into the redo stack.
+
+**Insert** (3 tools):
+- **Shapes** — rectangle, ellipse, triangle, line and arrow, each
+  added as its own fabric object with solid, linear-gradient or
+  radial-gradient fill, stroke width and colour
+- **Text** — editable text layers with font, size, weight and colour
+- **Mask** — shape masks applied to the image
+
+**Layers** — the object stack for everything Insert adds: select,
+reorder, and remove without disturbing the underlying image.
 
 ### Top toolbar
 
@@ -356,7 +366,8 @@ fraction of that — most is Angular CD + paint.
 
 ### Done
 
-- Headless mount, engine adapter, UI shell, 11 tools, theming, save flow
+- Headless mount, engine adapter, UI shell, the transform and filter tools,
+  theming, save flow
 - `FabricEngineAdapter` rewrite (~640 LOC) and the state-service switch
 - Canvas-space crop (bake-and-replace), Sharpen `textureSize` fix, blob-URL undo
 - Bidirectional sync (`imageTransformed` event), live-bound rotate slider,
@@ -364,10 +375,12 @@ fraction of that — most is Angular CD + paint.
 - Canvas frame overlay
 - Toast UI dependency removed (640 LOC adapter deleted)
 - Bundle, memory and functional verification
+- Insert tools — Shapes, Text and Mask — with a Layers panel over the
+  object stack
 
 ### Planned
 
-- Shapes (Free Draw, Rectangle, Circle, Text, Icons, Mask)
+- Free-draw brush and an icon library for the Shapes tool
 - Color picker / eyedropper
 - WebP / AVIF export options
 - Rich-text inline widget integration
@@ -385,7 +398,7 @@ fraction of that — most is Angular CD + paint.
   consumer-defined tools
 - **Video editor companion** sharing the engine-adapter pattern
 
-## License
+## Licence
 
-MIT (CoolMS DXP). The runtime peer dependency `fabric` is also MIT.
+MIT. The runtime peer dependency `fabric` is also MIT.
 See `ATTRIBUTION.md` for the full vendor acknowledgement chain.

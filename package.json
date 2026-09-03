@@ -1,7 +1,7 @@
 {
     "name": "@coolms/image-editor-angular",
-    "version": "2.0.0-alpha.2",
-    "description": "Modern image editor for CoolMS DXP — vanilla TypeScript engine adapter, framework-agnostic",
+    "version": "2.0.0-alpha.3",
+    "description": "The CoolMS image editor for Angular: a fabric.js v6 engine behind a framework-agnostic adapter, with transform, filter and insert tools, a layers panel, and a save flow wired to the Media Library and VFS.",
     "license": "MIT",
     "type": "module",
     "peerDependencies": {

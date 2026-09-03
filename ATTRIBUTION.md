@@ -1,6 +1,6 @@
 # Attribution
 
-`@coolms/image-editor` builds on top of one open-source canvas
+`@coolms/image-editor-angular` builds on one open-source canvas
 library. This file acknowledges it and records the license under
 which it is used. The entry is MIT-compatible with CoolMS's own
 MIT license.
