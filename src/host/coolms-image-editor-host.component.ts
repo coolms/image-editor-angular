@@ -26,7 +26,7 @@ type HostState = 'preparing' | 'editing' | 'saving' | 'error';
 /**
  * CDK Dialog host wrapping `CoolmsImageEditorComponent`.
  *
- * Save flow (Phase 1C — discriminated context):
+ * Save flow (discriminated context):
  *
  *   Media context:
  *     Save  -> OverwriteConfirm -> POST /api/v1/media/{id}/replace

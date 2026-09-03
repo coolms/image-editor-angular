@@ -10,22 +10,22 @@ import { firstValueFrom } from 'rxjs';
  * vs vfs); the service stays a thin wrapper around `HttpClient`.
  *
  *   `replaceMediaAsset`   -> `POST /api/v1/media/{id}/replace`
- *                           (Phase 1A; Media-owned, multipart, replaces
+ *                           (Media-owned, multipart, replaces
  *                            asset bytes in place, triggers thumbnail
  *                            regeneration).
  *
  *   `writeVfsFile`        -> `POST /api/v1/vfs/files/binary`
- *                           (Phase 1B; VFS-owned, multipart, write or
+ *                           (VFS-owned, multipart, write or
  *                            replace at an absolute path; explicit
  *                            `overwrite=true` is required to clobber
  *                            an existing file). Also backs media "Save as"
  *                            — a new file under `/media/{collection}/` is
  *                            auto-promoted to a managed asset (the old
- *                            `/api/v1/media/upload` route was removed, #87).
+ *                            `/api/v1/media/upload` route was removed).
  *
  * The legacy `/api/v1/image-editor/edit` endpoint is no longer
  * called from the frontend. It remains registered server-side and is
- * scheduled for deprecation in Phase 1D.
+ * scheduled for deprecation.
  */
 @Injectable({ providedIn: 'root' })
 export class ImageEditorHttpService {
@@ -55,7 +55,7 @@ export class ImageEditorHttpService {
     /**
      * Write or replace a binary VFS file. `overwrite=true` is
      * required to clobber an existing file (the backend returns
-     * 409 Conflict otherwise — Phase 1B safety opt-in).
+     * 409 Conflict otherwise — an explicit safety opt-in).
      */
     async writeVfsFile(params: {
         readonly blob:      Blob;

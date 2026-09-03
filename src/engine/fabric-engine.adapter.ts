@@ -229,7 +229,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         // overlay. Applying the crop in image-local coordinates instead
         // would crop an axis-aligned rectangle of the un-rotated image
         // and then re-apply the rotation, producing the diamond-shaped
-        // output reported in the gamma.2 smoke (Bug 1).
+        // output that the engine swap surfaced.
         const baked = image.toCanvasElement({ multiplier: 1 });
 
         const ox = Math.max(0, canvasSpaceRect.x - imageBounds.left);

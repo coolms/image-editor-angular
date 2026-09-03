@@ -5,7 +5,7 @@ custom `FabricEngineAdapter`, wrapped by a CoolMS-native UI shell.
 
 ## Status
 
-** — fabric.js v6 engine, feature-complete.** The shell
+**Feature-complete on the fabric.js v6 engine.** The shell
 (top toolbar, canvas mount, right sidebar, properties panel) drives
 all editing operations through the engine API. The save flow is
 integrated end-to-end with the Media Library and the VFS file
@@ -13,12 +13,9 @@ manager: open an image asset (or any VFS image file), edit, Save
 (overwrite) or Save as new, and the source surface reflects the
 change after thumbnail regeneration.
 
-The engine adapter pattern () was the foundation that
-made the engine swap from Toast UI to fabric.js v6 viable
-without touching the UI shell or any tool component. See
-[](../../../../../docs/adr/079-toast-ui-rejection.md) for the
-rejection rationale and [](../../../../../docs/adr/081-image-editor-engine-swap.md)
-for the journey.
+The engine adapter pattern was the foundation that made the engine
+swap from Toast UI to fabric.js v6 viable without touching the UI
+shell or any tool component.
 
 ## Features
 
@@ -27,7 +24,7 @@ for the journey.
 **Transform** (4 tools):
 - **Crop** — interactive cropzone overlay built from a fabric `Rect`
   with corner controls; aspect ratio presets (Free, 1:1, 4:3, 16:9,
-  3:2). Apply uses the bake-and-replace strategy (gamma.3): the image
+  3:2). Apply uses the bake-and-replace strategy: the image
   is rendered with its current rotation/flip/filters into a canvas
   at the bounding-box dimensions, the cropped sub-region is
   extracted, and the FabricImage is replaced. The cropped output
@@ -60,7 +57,7 @@ entries from leaking into the redo stack.
 ### Top toolbar
 
 - **Undo** / **Redo** — bound to engine history events. The custom
-  command stack () records one entry per logical
+  command stack records one entry per logical
   operation; mouse manipulations and sidebar-driven changes both
   push commands through the same path.
 - **Reset** — re-loads the original image and applies fit-to-viewport
@@ -175,7 +172,7 @@ next power of two (capped at 16384) and the filter backend is
 re-initialised. Without this, fabric's WebGL filter pipeline
 allocates a tile-sized GL canvas that's too small for the image,
 leaving pixels past the tile boundary un-rendered (the right-edge
-crop bug observed during gamma.2 smoke). The factory's `WebGLProbe`
+crop bug this surfaced). The factory's `WebGLProbe`
 falls back to `Canvas2dFilterBackend` automatically if the GPU
 can't support the new size.
 
@@ -314,7 +311,7 @@ Two intentionally hard-coded values exist:
 
 ## Performance
 
-Measured during gamma.6 verification (Chrome on Windows, NVIDIA GTX
+Measured on Chrome for Windows (, NVIDIA GTX
 1650 via ANGLE D3D11, `WebGLFilterBackend` confirmed,
 `MAX_TEXTURE_SIZE=16384`):
 
@@ -351,39 +348,37 @@ fraction of that — most is Angular CD + paint.
   or when the requested `textureSize` exceeds `MAX_TEXTURE_SIZE`.
 - Recommended ≥ 4 GB RAM for images larger than 4096 px on the
   long edge (the WebGL tile bumps to 8192 for those).
-- Tested in Chrome (gamma.6 smoke). Firefox / Edge / Safari verified
+- Tested in Chrome. Firefox / Edge / Safari verified
   conceptually but not in this round; report any browser-specific
   issues against the engine adapter, not the UI shell.
 
 ## Roadmap
 
-| Phase | Scope | Status |
-|---|---|---|
-| beta.1-beta.7 | Headless mount, engine adapter, UI shell, 11 tools, theming, save flow | Done |
-| gamma.1 | fabric.js v6 diagnostic (read-only) | Done |
-| gamma.2 | `FabricEngineAdapter` rewrite (~640 LOC), state service switch | Done |
-| gamma.3 | Canvas-space crop (bake-and-replace), Sharpen textureSize fix, blob-URL undo | Done |
-| (B) | Bidirectional sync (`imageTransformed` event), live-bound rotate slider, flip / resize signals | Done |
-| gamma.4 | Canvas frame overlay, three known issues validated as resolved-for-free | Done |
-| gamma.5 | Toast UI dependency removed (640 LOC adapter deleted, comments cleaned) | Done |
-| gamma.6 | Bundle / memory / functional verification | Done |
-| gamma.7 | README + outcomes + journey | Done |
+### Done
 
-###+ — incremental tool expansion
+- Headless mount, engine adapter, UI shell, 11 tools, theming, save flow
+- `FabricEngineAdapter` rewrite (~640 LOC) and the state-service switch
+- Canvas-space crop (bake-and-replace), Sharpen `textureSize` fix, blob-URL undo
+- Bidirectional sync (`imageTransformed` event), live-bound rotate slider,
+  flip / resize signals
+- Canvas frame overlay
+- Toast UI dependency removed (640 LOC adapter deleted)
+- Bundle, memory and functional verification
 
-- **gamma.8** — Shapes (Free Draw, Rectangle, Circle, Text, Icons, Mask)
-- **gamma.9** — Color picker / eyedropper
-- **gamma.10** — WebP / AVIF export options
-- **gamma.11** — Tiptap inline widget integration
-- **gamma.12** — Server-side preset crops (Media Library thumbnail / banner sizes)
-- **gamma.13** — Drag-and-drop image into the editor
-- **gamma.14** — AI integrations (background removal, smart crop, upscaling) — depends on AI endpoints backlog
-- **gamma.15** — Mobile responsive (touch gestures, pinch-zoom)
-- **gamma.16** — Keyboard shortcuts (Ctrl+0 fit, Ctrl+1 actual size, etc.)
+### Planned
 
-### — distant
+- Shapes (Free Draw, Rectangle, Circle, Text, Icons, Mask)
+- Color picker / eyedropper
+- WebP / AVIF export options
+- Rich-text inline widget integration
+- Server-side preset crops (Media Library thumbnail / banner sizes)
+- Drag-and-drop image into the editor
+- AI integrations (background removal, smart crop, upscaling)
+- Mobile responsive (touch gestures, pinch-zoom)
+- Keyboard shortcuts (Ctrl+0 fit, Ctrl+1 actual size, etc.)
 
-- **Standalone npm publication** as `@coolms/image-editor`
+### Further out
+
 - **Framework adapters** — React, Vue, Svelte wrappers around the
   same `ImageEditorEngine` interface
 - **Plugin tool registration** — open `ToolRegistryService` to

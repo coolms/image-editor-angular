@@ -134,7 +134,13 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
         registry.register({
             id:        'shape',
             label:     'Shapes',
-            icon:      'bi-shapes',
+            // `bi-shapes` does not exist. Bootstrap Icons has no generic
+            // shapes glyph, and a class naming no icon renders nothing at
+            // all -- the button kept its label and lost its picture, with no
+            // error anywhere. `bi-pentagon` is a shape that is NOT one of the
+            // five this tool inserts (rect, ellipse, triangle, line, arrow),
+            // so it reads as the group rather than as one of its members.
+            icon:      'bi-pentagon',
             category:  'insert',
             component: ShapeToolComponent,
         });
