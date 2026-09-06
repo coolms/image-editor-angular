@@ -321,7 +321,7 @@ Two intentionally hard-coded values exist:
 
 ## Performance
 
-Measured on Chrome for Windows (, NVIDIA GTX
+Measured on Chrome for Windows (NVIDIA GTX
 1650 via ANGLE D3D11, `WebGLFilterBackend` confirmed,
 `MAX_TEXTURE_SIZE=16384`):
 
