@@ -7,11 +7,11 @@
  * layer stacked on top. Fabric's canvas is already an ordered object
  * stack, so a "layer" is just a canvas object carrying a stable id.
  *
- * Resize / filters still operate on the base image only — they're
+ * Resize / filters still operate on the base image only -- they're
  * pixel-baking ops, meant to run before annotations. C.1c makes
  * **rotate / flip** target the selected non-image layer (falling back
  * to the base image) and adds **masking** (a clip-path on the target;
- * see {@link MaskSpec}); C.1e makes **crop** composition-aware — the
+ * see {@link MaskSpec}); C.1e makes **crop** composition-aware -- the
  * annotation layers shift with the cropped content and clip at the new
  * edges, so a crop after annotating stays aligned.
  */
@@ -23,7 +23,7 @@ export type LayerKind = 'image' | 'shape' | 'text';
 export type ShapeKind = 'rect' | 'ellipse' | 'line' | 'arrow' | 'triangle';
 
 /**
- * Canvas-space geometry of an annotation shape — the round-trippable
+ * Canvas-space geometry of an annotation shape -- the round-trippable
  * subset consumers that author geometry (e.g. the ImageMap region
  * page) read and write via `addShapeAt()` / `getShapeGeometry()`.
  * Coordinates are SCENE space (viewport zoom/pan factored out), the
@@ -38,7 +38,7 @@ export type ShapeGeometry =
  * Options for `addShapeAt()`. Style keys mirror {@link ShapeOptions};
  * the extras tune the shape for geometry-authoring use:
  * - `name`: layer display name (defaults to the shape kind).
- * - `lockRotation`: hide the rotate handle — authored geometry is
+ * - `lockRotation`: hide the rotate handle -- authored geometry is
  *   axis-aligned (rect regions have no rotation representation).
  * - `lockNonUniformScaling`: hide the edge handles so corner drags
  *   scale uniformly (keeps a circle circular).
@@ -124,7 +124,7 @@ export interface TextOptions {
 /**
  * Generic property bag the style panels read/write against the active
  * object. Keys are fabric property names (`fill`, `stroke`,
- * `strokeWidth`, `opacity`, `fontFamily`, …); the engine reads them off
+ * `strokeWidth`, `opacity`, `fontFamily`, ...); the engine reads them off
  * / sets them on the active object without the UI importing fabric.
  */
 export type ObjectProps = Record<string, string | number>;
@@ -139,7 +139,7 @@ export const DEFAULT_SHAPE_OPTIONS: ShapeOptions = {
 export const DEFAULT_FILL_SPEC: FillSpec = {
     type:   'solid',
     color:  DEFAULT_SHAPE_OPTIONS.fill,
-    // Literal on purpose — this is a CANVAS fill, not CSS: Fabric resolves no
+    // Literal on purpose -- this is a CANVAS fill, not CSS: Fabric resolves no
     // custom properties, so a `var()` here renders as nothing.
     color2: '#ffffff',
     angle:  0,
@@ -173,7 +173,7 @@ export const TEXT_FONT_FAMILIES = [
  * `none` clears the mask. `rect` / `rounded` / `ellipse` / `triangle`
  * are geometric primitives; `star` / `heart` / `hexagon` are SVG-path
  * presets. `custom` (C.1d) clips to arbitrary path geometry the user
- * pasted or uploaded as an SVG — see {@link MaskSpec.svgPath}. The
+ * pasted or uploaded as an SVG -- see {@link MaskSpec.svgPath}. The
  * engine builds the matching fabric `clipPath` against the target's own
  * box, so the mask tracks the object through scale / move, and the
  * export flatten bakes it in (the clip is part of the object's normal
@@ -193,7 +193,7 @@ export type MaskShape =
  *               the clip's shorter half-dimension (50 = pill / circle).
  * - `svgPath` : SVG path `d` data for `shape: 'custom'` (C.1d). Sanitised
  *               geometry extracted from a pasted path string or uploaded
- *               SVG file — every drawable element is flattened to a single
+ *               SVG file -- every drawable element is flattened to a single
  *               combined path (paths only, no script / external refs). The
  *               engine scales its bounding box to the clip box exactly
  *               like the built-in path presets, so it tracks scale / move

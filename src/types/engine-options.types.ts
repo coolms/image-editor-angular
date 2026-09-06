@@ -4,7 +4,7 @@ import type { Size } from './geometry.types';
  * Construction options for any `ImageEditorEngine`. The container is
  * required; everything else is optional with sensible defaults.
  *
- * No engine-specific knobs leak into this shape — Toast-UI-only
+ * No engine-specific knobs leak into this shape -- Toast-UI-only
  * options (selectionStyle borderColor etc.) belong on a Toast-UI-only
  * sub-options bag if a future shell needs to thread them through. For
  * MVP, the defaults are enough.

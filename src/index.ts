@@ -1,5 +1,5 @@
 /**
- * @coolms/image-editor — public surface.
+ * @coolms/image-editor -- public surface.
  *
  * Consumers (UI shells, smoke tests, future tools) import from
  * `@coolms/image-editor` only. The barrel keeps the internal file

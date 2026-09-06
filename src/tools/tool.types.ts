@@ -19,7 +19,7 @@ export type ToolCategory = 'transform' | 'filter' | 'insert' | 'layers' | 'outpu
  * can register without dragging in an unused implements clause.
  *
  * `inputs` lets one component class serve many tool entries by
- * differing only in data — used by the filter tools, where one
+ * differing only in data -- used by the filter tools, where one
  * `SliderFilterComponent` (and one `ToggleFilterComponent`) backs
  * every entry in the Filters palette via its `config` input. The
  * right-sidebar pipes this map straight into `NgComponentOutlet`'s

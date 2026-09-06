@@ -19,7 +19,7 @@ import { firstValueFrom } from 'rxjs';
  *                            replace at an absolute path; explicit
  *                            `overwrite=true` is required to clobber
  *                            an existing file). Also backs media "Save as"
- *                            — a new file under `/media/{collection}/` is
+ *                            -- a new file under `/media/{collection}/` is
  *                            auto-promoted to a managed asset (the old
  *                            `/api/v1/media/upload` route was removed).
  *
@@ -55,7 +55,7 @@ export class ImageEditorHttpService {
     /**
      * Write or replace a binary VFS file. `overwrite=true` is
      * required to clobber an existing file (the backend returns
-     * 409 Conflict otherwise — an explicit safety opt-in).
+     * 409 Conflict otherwise -- an explicit safety opt-in).
      */
     async writeVfsFile(params: {
         readonly blob:      Blob;

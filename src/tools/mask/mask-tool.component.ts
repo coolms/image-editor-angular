@@ -7,11 +7,11 @@ import { DEFAULT_MASK_SPEC } from '../../types/layer.types';
 import { extractSvgMaskPath } from './svg-mask.util';
 
 /**
- * Mask / clip tool (C.1c / C.1d). Cuts the mask target to a shape —
+ * Mask / clip tool (C.1c / C.1d). Cuts the mask target to a shape --
  * geometric primitives (rect / rounded / ellipse / triangle), the
  * SVG-path presets (star / heart / hexagon), or an arbitrary **custom**
  * SVG the user pastes or uploads (C.1d). The target is the selected
- * shape / text layer when one is active, otherwise the base image — so
+ * shape / text layer when one is active, otherwise the base image -- so
  * selecting a layer masks it, selecting nothing masks the photo.
  *
  * The engine owns the fabric `clipPath`; this panel only round-trips a
@@ -180,7 +180,7 @@ export class MaskToolComponent {
     /** Last validation error for the SVG input, or `null` when clean. */
     protected readonly svgError   = signal<string | null>(null);
 
-    /** Name of what's being masked — the selected layer, else "Background". */
+    /** Name of what's being masked -- the selected layer, else "Background". */
     protected readonly targetName = computed<string>(() => {
         const kind = this.state.activeLayerKind();
         if (kind !== null && kind !== 'image') {
@@ -248,7 +248,7 @@ export class MaskToolComponent {
 
     private apply(): void {
         const shape = this.shape();
-        // A custom mask with no geometry yet is a no-op — wait for the
+        // A custom mask with no geometry yet is a no-op -- wait for the
         // user to paste / upload and hit "Use as mask" rather than
         // stamping (and clearing) an empty clip.
         if (shape === 'custom' && this.customPath().trim() === '') return;

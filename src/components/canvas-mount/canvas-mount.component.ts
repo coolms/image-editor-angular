@@ -12,17 +12,17 @@ import { ImageEditorStateService } from '../../services/image-editor-state.servi
  *
  * Three responsibilities live here:
  *
- * 1. **Loading / error overlays** — surface the lifecycle states
+ * 1. **Loading / error overlays** -- surface the lifecycle states
  *    the state service publishes through `state.state()`.
  *
- * 2. **Fit-to-viewport zoom** — once the engine emits `imageLoaded`
+ * 2. **Fit-to-viewport zoom** -- once the engine emits `imageLoaded`
  *    (visible through `state.isReady()`), measure the container and
  *    apply the engine's calculated fit zoom. A `ResizeObserver`
  *    keeps the cached fit value fresh on container resize without
  *    yanking the user out of a manually-set zoom; the next Reset /
  *    "%" click picks up the updated value.
  *
- * 3. **Hand-tool pan** — when `state.handToolActive()` is true,
+ * 3. **Hand-tool pan** -- when `state.handToolActive()` is true,
  *    mouse-down + drag on the host element pans the engine viewport
  *    via `engine.pan(dx, dy)`. mousemove / mouseup are bound to
  *    `document` so a drag that escapes the host's bounds still
@@ -84,7 +84,7 @@ export class CanvasMountComponent implements OnInit, OnDestroy {
         });
 
         // Drive fabric's cursor and selection state from the Hand
-        // tool toggle. fabric owns these properties internally —
+        // tool toggle. fabric owns these properties internally --
         // CSS `cursor: grab` on the host element doesn't reach the
         // canvas, and without disabling `selection` a drag on empty
         // canvas draws fabric's group-select rectangle instead of
@@ -144,7 +144,7 @@ export class CanvasMountComponent implements OnInit, OnDestroy {
      * Force a re-fit pass after an intentional container-size change
      * (e.g. dialog host's fullscreen toggle). Different from the
      * ResizeObserver path which preserves the user's manual zoom on
-     * casual resizes — refit() unconditionally re-syncs canvas
+     * casual resizes -- refit() unconditionally re-syncs canvas
      * dimensions and resets the viewport so the image stays centred
      * in the new viewport.
      *
@@ -208,7 +208,7 @@ export class CanvasMountComponent implements OnInit, OnDestroy {
         // Back to grab cursor while Hand is still active. The
         // separate handToolActive effect covers the case where the
         // user toggles Hand off mid-gesture (rare but possible via
-        // keyboard) — it'll reset to default on the next tick.
+        // keyboard) -- it'll reset to default on the next tick.
         if (this.state.handToolActive()) {
             engine.setCursor('grab');
         }

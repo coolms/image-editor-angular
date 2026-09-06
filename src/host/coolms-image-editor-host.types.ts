@@ -6,13 +6,13 @@
  * caller having to know which one. Each branch carries exactly the
  * fields that branch needs:
  *
- *   - **Media context** — the asset is a registered `MediaAsset`,
+ *   - **Media context** -- the asset is a registered `MediaAsset`,
  *     so save flows through Media's APIs (`POST /media/{id}/replace`
  *     for overwrite, `POST /media/upload` for save-as-new). The
  *     asset's `path` carries the VFS location; we derive the parent
  *     directory from it for the save-as-new target.
  *
- *   - **VFS context** — the file is a plain VFS file with no
+ *   - **VFS context** -- the file is a plain VFS file with no
  *     MediaAsset record (e.g., a theme asset, a template image).
  *     Save flows through VFS's binary endpoint
  *     (`POST /vfs/files/binary`). `canWrite` gates the Save button:
@@ -37,7 +37,7 @@ export interface CoolmsImageEditorMediaContext {
         readonly mimeType:    string;
         /**
          * Materialised VFS path of the asset (e.g., `/media/uploads/photo.jpg`).
-         * The save-as-new flow derives the target directory from this — the
+         * The save-as-new flow derives the target directory from this -- the
          * new asset lands in the same collection as the source. Optional
          * because `MediaAssetDto.path` can be null for fresh upload responses;
          * callers set this when they have it (the editor falls back to

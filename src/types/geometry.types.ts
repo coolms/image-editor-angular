@@ -1,7 +1,7 @@
 /**
  * Pure geometry primitives shared across the engine and any UI shell
  * sitting on top. Deliberately framework-agnostic: no Angular, no
- * fabric.js, no Toast UI imports — these types are part of the public
+ * fabric.js, no Toast UI imports -- these types are part of the public
  * surface of `@coolms/image-editor` and need to compile without the
  * peer dependency installed.
  */

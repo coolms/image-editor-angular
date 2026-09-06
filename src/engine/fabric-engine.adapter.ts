@@ -258,7 +258,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         // looks identical to the pre-crop view.
         const prevSnapshotDataUrl = baked.toDataURL('image/png');
 
-        // C.1e — composition-aware crop. Annotation layers must shift
+        // C.1e -- composition-aware crop. Annotation layers must shift
         // with the cropped content so they stay aligned (and clip at the
         // new edges). Capture each layer's offset from the ORIGINAL
         // image's content top-left (`imageBounds` = image-pixel space,
@@ -266,7 +266,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         // mounted, minus the crop offset. `placeLayers(0, 0)` (no crop
         // drop) restores the pre-crop layout on undo. Anything left of /
         // above the crop lands at a negative offset and is clipped by the
-        // smaller canvas + the export flatten — no need to delete it.
+        // smaller canvas + the export flatten -- no need to delete it.
         const offsets = this.layerObjects()
             .filter(o => this.layerKind(o) !== 'image')
             .map(o => ({
@@ -345,7 +345,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
             strokeUniform:       true,
             cornerStyle:         'circle',
             // Literal on purpose: Fabric paints to a CANVAS, which resolves no
-            // CSS custom properties — `var(--cms-text-inverse)` would render as
+            // CSS custom properties -- `var(--cms-text-inverse)` would render as
             // nothing. A tokenising pass swapped this once and it had
             // to be put back; keep it a literal, or thread the resolved value
             // through `getComputedStyle` if it ever needs to follow the theme.
@@ -515,18 +515,18 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         // been a revoked blob URL for VFS-loaded images).
         const prevSnapshotDataUrl = baked.toDataURL('image/png');
 
-        // C.1f — composition-aware resize. Like crop (C.1e), annotation
+        // C.1f -- composition-aware resize. Like crop (C.1e), annotation
         // layers must move with the base image so they stay aligned; but
         // resize ALSO scales the image, so a shape / text layer has to
         // grow or shrink in step (crop is a pure translation, resize is a
         // translation *and* a scale). Capture each layer's offset from the
         // ORIGINAL image's content top-left (`imageBounds` = displayed
         // canvas-space) plus its own scaleX/scaleY, and the resize factor
-        // (new pixel size ÷ old displayed size). `scaleLayers(originLeft,
+        // (new pixel size / old displayed size). `scaleLayers(originLeft,
         // originTop, sx, sy)` re-places each layer at
         // `image-top-left + offset*factor` and multiplies its scaleX/scaleY
-        // by the factor (origin-center, so it grows about its own centre —
-        // matching a handle-resize). `scaleLayers(…, 1, 1)` on undo
+        // by the factor (origin-center, so it grows about its own centre --
+        // matching a handle-resize). `scaleLayers(..., 1, 1)` on undo
         // restores the captured pre-resize position + size verbatim.
         const sx = target.width  / Math.max(1, imageBounds.width);
         const sy = target.height / Math.max(1, imageBounds.height);
@@ -683,7 +683,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
             fill:          opts.fill        ?? FabricEngineAdapter.DEFAULT_SHAPE_FILL,
             stroke:        opts.stroke      ?? '#2563eb',
             strokeWidth:   opts.strokeWidth ?? 2,
-            // Keep the border width constant under interactive scaling —
+            // Keep the border width constant under interactive scaling --
             // geometry consumers read the shape's box, not its stroke.
             strokeUniform: true,
         };
@@ -772,7 +772,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         }
         if (obj instanceof FabricRect) {
             // Axis-aligned box from the center point, ignoring rotation
-            // (annotation rects ship lockRotation — see the interface).
+            // (annotation rects ship lockRotation -- see the interface).
             const w = (obj.width  ?? 0) * (obj.scaleX ?? 1);
             const h = (obj.height ?? 0) * (obj.scaleY ?? 1);
             const c = obj.getCenterPoint();
@@ -797,8 +797,8 @@ export class FabricEngineAdapter implements ImageEditorEngine {
 
     /**
      * Swap the polygon's default handles for one draggable Control per
-     * vertex — the official fabric "custom polygon controls" pattern:
-     * `positionHandler` projects `points[i]` through viewport × object
+     * vertex -- the official fabric "custom polygon controls" pattern:
+     * `positionHandler` projects `points[i]` through viewport x object
      * transform; `actionHandler` writes the pointer back into
      * `points[i]` (object-local, stroke-compensated) and re-anchors the
      * polygon on a neighbouring vertex after `setDimensions()` so the
@@ -818,11 +818,11 @@ export class FabricEngineAdapter implements ImageEditorEngine {
 
         this.rebuildVertexControls(polygon);
         polygon.hasBorders = false;
-        // Vertices are the ONLY interaction in edit mode — whole-shape
+        // Vertices are the ONLY interaction in edit mode -- whole-shape
         // dragging would fight the per-point handles.
         polygon.lockMovementX = true;
         polygon.lockMovementY = true;
-        // Filled white dots with a blue ring — fabric's default
+        // Filled white dots with a blue ring -- fabric's default
         // transparentCorners renders outline-only handles that vanish
         // against same-hue shapes.
         polygon.cornerStyle = 'circle';
@@ -893,7 +893,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
     }
 
     /**
-     * (Re)build one draggable Control per vertex — used on entering vertex
+     * (Re)build one draggable Control per vertex -- used on entering vertex
      * edit AND after a topology change (add/remove) so the `vertexN` controls
      * stay index-aligned with the current `points` array.
      */
@@ -927,7 +927,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         };
 
         // Project onto the NEAREST edge (segment i->i+1) and insert the
-        // projected point after i — a collinear insert, so the polygon's
+        // projected point after i -- a collinear insert, so the polygon's
         // outline is unchanged; it just gains a handle to drag.
         let bestIndex = 0;
         let bestDistSq = Infinity;
@@ -958,7 +958,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         const polygon = this.findLayer(id);
         if (this.vertexEdit === null || !(polygon instanceof Polygon) || this.vertexEdit.obj !== polygon) return false;
         const points = polygon.points ?? [];
-        // A polygon needs at least 3 vertices — never remove past that floor.
+        // A polygon needs at least 3 vertices -- never remove past that floor.
         if (points.length <= 3) return false;
 
         // Scene -> object-local point-space (mirrors addVertexAt / moveVertex).
@@ -979,7 +979,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
             if (distSq < bestDistSq) { bestDistSq = distSq; bestIndex = i; }
         }
 
-        // Only remove when the click landed ON a handle — within a fraction
+        // Only remove when the click landed ON a handle -- within a fraction
         // of the polygon's own size. Otherwise return false so the caller
         // falls through to addVertexAt (which targets the OUTLINE). Scaling
         // the threshold to the shape keeps it zoom- and size-independent.
@@ -991,7 +991,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
         const before = points.map(p => ({ x: p.x, y: p.y }));
         const after = before.slice();
         after.splice(bestIndex, 1);
-        // The surviving anchor vertex: after[0] is before[fromIdx] — removing
+        // The surviving anchor vertex: after[0] is before[fromIdx] -- removing
         // vertex 0 shifts everyone down, so it lives at before-index 1 then.
         const fromIdx = bestIndex === 0 ? 1 : 0;
 
@@ -1021,11 +1021,11 @@ export class FabricEngineAdapter implements ImageEditorEngine {
      * `setDimensions()` bbox recompute so the shape never jumps.
      *
      * `fromIndex` is the anchor vertex's index in the CURRENT points,
-     * `toIndex` its index in the NEW `pts` — the two must be the SAME
+     * `toIndex` its index in the NEW `pts` -- the two must be the SAME
      * vertex. For an insert (add) or the identity case both are 0 (the
      * defaults). A removal that drops vertex 0 shifts every later vertex
      * down one, so its surviving anchor lives at different indices before
-     * vs after — hence the explicit pair.
+     * vs after -- hence the explicit pair.
      */
     private applyVertexTopology(polygon: Polygon, pts: PointType[], fromIndex = 0, toIndex = 0): void {
         const current = polygon.points ?? [];
@@ -1077,7 +1077,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
             && before.points.every((p, i) => p.x === after.points[i].x && p.y === after.points[i].y);
         if (unchanged) return;
 
-        // The drag already happened — record it for undo/redo only
+        // The drag already happened -- record it for undo/redo only
         // (pushCommand does not invoke do()), like addShapeAt.
         const apply = (state: VertexEditSnapshot) => {
             polygon.points = state.points.map(p => ({ x: p.x, y: p.y }));
@@ -1130,7 +1130,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
     setLayerFill(id: string, fill: string | null): void {
         const obj = this.findLayer(id);
         if (obj === null || this.layerKind(obj) === 'image') return;
-        // A transient PREVIEW tint (status overlay etc.) — NOT recorded as an
+        // A transient PREVIEW tint (status overlay etc.) -- NOT recorded as an
         // undoable command and NOT part of getShapeGeometry (fill is style, not
         // geometry), so it never touches what the save-diff persists. Passing
         // null restores the default region fill.
@@ -1398,8 +1398,8 @@ export class FabricEngineAdapter implements ImageEditorEngine {
 
         // Cheap structural check first: a mask / clipPath on the base
         // image (or any visible layer) cuts pixels to transparent. This
-        // is the masking case (C.1c) — the verified source of opaque
-        // black corners on a JPEG save — and returns without a scan.
+        // is the masking case (C.1c) -- the verified source of opaque
+        // black corners on a JPEG save -- and returns without a scan.
         if (this.objectHasClip(this.image)) return true;
         for (const o of this.layerObjects()) {
             if (o.visible !== false && this.objectHasClip(o)) return true;
@@ -1554,7 +1554,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
             // centre while preserving the current zoom level.
             // `setDimensions` updates `canvas.width/height`, and
             // `centerObject` moves the image to the new canvas centre
-            // in canvas coords — but the existing viewportTransform's
+            // in canvas coords -- but the existing viewportTransform's
             // translate term still anchors to the OLD canvas centre.
             // Without re-anchoring, the image drifts off-centre
             // (most visibly vertically when the dialog grows or
@@ -1731,8 +1731,8 @@ export class FabricEngineAdapter implements ImageEditorEngine {
     /**
      * Make sure fabric's WebGL filter backend has a GL canvas large
      * enough to hold the image's full pixel area. Fabric defaults
-     * `config.textureSize` to 4096 and constructs a 4096×4096 GL
-     * canvas; rendering a 4608×3456 image into that backend leaves
+     * `config.textureSize` to 4096 and constructs a 4096x4096 GL
+     * canvas; rendering a 4608x3456 image into that backend leaves
      * a ~512 px right-edge band un-rendered (the WebGL viewport is
      * set to image dims but the GL canvas can't hold them), which
      * `copyGLTo2D` then reads as transparent. That surfaced as the
@@ -1833,7 +1833,7 @@ export class FabricEngineAdapter implements ImageEditorEngine {
 
         this.canvas.on('object:modified', (e: any) => {
             // Shape / text layer moved / resized / rotated with the
-            // mouse handles — push a generic transform command.
+            // mouse handles -- push a generic transform command.
             const tgt = e.target as FabricObject | undefined;
             if (tgt && this.layerId(tgt) !== '' && this.layerKind(tgt) !== 'image') {
                 const snap = this.objTransformSnapshot;
@@ -1968,8 +1968,8 @@ export class FabricEngineAdapter implements ImageEditorEngine {
      * Build a fabric solid colour or `Gradient` from a {@link FillSpec}.
      * Gradients use `gradientUnits: 'percentage'`, so coords are 0..1 of
      * the object's bounding box (origin top-left) and the gradient
-     * tracks the object through resize / text reflow — fabric applies
-     * `ctx.transform(width, 0, 0, height, …)` at paint time, including
+     * tracks the object through resize / text reflow -- fabric applies
+     * `ctx.transform(width, 0, 0, height, ...)` at paint time, including
      * the `toCanvasElement` flatten the export composites.
      */
     private buildFill(spec: FillSpec): string | Gradient<'linear'> | Gradient<'radial'> {
@@ -2257,9 +2257,9 @@ export class FabricEngineAdapter implements ImageEditorEngine {
 
     /**
      * Build a `Path` clip from raw SVG path `d` data, scaling its
-     * bounding box to the `cw × ch` clip box (centred via `common`).
+     * bounding box to the `cw x ch` clip box (centred via `common`).
      * Shared by the built-in path presets and arbitrary `custom` masks
-     * (C.1d) — fabric computes the path's intrinsic bbox, and the
+     * (C.1d) -- fabric computes the path's intrinsic bbox, and the
      * `scaleX/Y` maps it onto the target's clip box, so any path tracks
      * scale / move and bakes into `toCanvasElement` like the presets.
      * Returns `null` for empty / unparseable data (clears the mask).

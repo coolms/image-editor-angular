@@ -7,10 +7,10 @@ import type { LayerInfo, LayerKind } from '../types/layer.types';
 /**
  * Lifecycle states the shell renders against.
  *
- * `uninitialized` — fresh service instance, no engine yet.
- * `loading`       — engine creation or initial image load is in flight.
- * `ready`         — engine is mounted and the image is on the canvas.
- * `error`         — engine creation or initial load failed; `errorMessage`
+ * `uninitialized` -- fresh service instance, no engine yet.
+ * `loading`       -- engine creation or initial image load is in flight.
+ * `ready`         -- engine is mounted and the image is on the canvas.
+ * `error`         -- engine creation or initial load failed; `errorMessage`
  *                   holds the user-facing reason.
  */
 export type EditorState = 'uninitialized' | 'loading' | 'ready' | 'error';
@@ -45,7 +45,7 @@ export class ImageEditorStateService {
      */
     readonly currentZoom   = signal<number>(1);
     /**
-     * Fit-to-viewport zoom — the scale at which the loaded image
+     * Fit-to-viewport zoom -- the scale at which the loaded image
      * fills the canvas-mount (with a small margin). Calculated by
      * the canvas-mount component once it has measured its viewport,
      * and re-calculated on container resize. Used as the target for
@@ -132,7 +132,7 @@ export class ImageEditorStateService {
     /**
      * Create the engine, load the image, and attach the listeners that
      * keep the history-state signals in sync. Throws (and flips state to
-     * 'error') if either step fails — the shell surfaces the message
+     * 'error') if either step fails -- the shell surfaces the message
      * through the canvas-mount overlay.
      *
      * The 'uninitialized' guard is what makes the service safe to call
@@ -222,7 +222,7 @@ export class ImageEditorStateService {
     }
 
     /**
-     * Viewport zoom controls. Clamped 0.05..10 (5%..1000%) — wide
+     * Viewport zoom controls. Clamped 0.05..10 (5%..1000%) -- wide
      * range to accommodate fit-zoom for very large images (a 8000px
      * image in a 600px viewport fits at ~7%) and the occasional
      * pixel-peeping zoom-in on small images. Step factor of 1.25
@@ -302,7 +302,7 @@ export class ImageEditorStateService {
      *     undo and redo stacks;
      *   - the viewport pan offset is zeroed and the zoom is set to
      *     the fit-to-viewport value (matches what the user saw on
-     *     first mount, not the raw 1.0× that would shrink large
+     *     first mount, not the raw 1.0x that would shrink large
      *     images).
      *
      * The order matters: tool deactivation first so a mid-edit
@@ -384,7 +384,7 @@ export class ImageEditorStateService {
             this.activeLayerKind.set(kind);
             // Mirror the selected non-image layer's transform so the
             // Rotate / Flip tools target it (C.1c). `null` (image or
-            // nothing selected) leaves the last values — the
+            // nothing selected) leaves the last values -- the
             // `transformTarget*` computeds fall back to image state.
             const t = engine.getActiveLayerTransform();
             if (t !== null) {

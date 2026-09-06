@@ -41,7 +41,7 @@ type HostState = 'preparing' | 'editing' | 'saving' | 'error';
  *
  * Save button gating: in the VFS context, `canWrite=false` disables
  * Save (overwriting a read-only file would 403 anyway) but Save as
- * stays enabled — the user can always save a copy if they have
+ * stays enabled -- the user can always save a copy if they have
  * write permission on the parent directory.
  *
  * Failures stay non-fatal: the dialog stays open with state set back
@@ -104,7 +104,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
         if (data.context === 'vfs' && !data.node.canWrite) return false;
         return true;
     });
-    /** Save as is gated only on engine readiness — even read-only sources can be saved as new. */
+    /** Save as is gated only on engine readiness -- even read-only sources can be saved as new. */
     readonly canSaveAs     = computed(
         () => this.engineReadyOk() && this.state() === 'editing',
     );
@@ -126,7 +126,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
         // Defensive: backend may serialise `dimensions` as an object
         // with `null` width/height before processing completes (the
         // shape is non-null but the values are). Treat that as "not
-        // available" rather than rendering literal "null × null".
+        // available" rather than rendering literal "null x null".
         if (dim == null || dim.width == null || dim.height == null) return '';
         return `${dim.width} × ${dim.height}`;
     });
@@ -137,7 +137,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
      * area of the host. ESC exits fullscreen via the EscCoordinator
      * stack so it composes cleanly with any future dialog-level ESC
      * handlers; the host opens with CDK `disableClose: true`, so the
-     * dialog itself never closes on ESC — only the X / Cancel buttons
+     * dialog itself never closes on ESC -- only the X / Cancel buttons
      * exit the editor.
      */
     readonly isFullscreen = signal(false);
@@ -172,7 +172,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
         this.destroyRef.onDestroy(this.unsaved.watch(this, () => this.hasEdits()));
 
         // ESC while fullscreen exits fullscreen. No-op outside
-        // fullscreen — the dialog stays open until Close X / Cancel
+        // fullscreen -- the dialog stays open until Close X / Cancel
         // (per Decision 1: editor had no ESC handler before, and
         // adding a dialog-close shortcut could trigger unsaved-work
         // surprises without a confirm flow in place).
@@ -453,7 +453,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
      * Export format. Content wins over source: when the flattened image
      * has any transparency (a mask / clipPath cut-out, or a transparent
      * source) we force PNG, because flattening it onto an opaque JPEG
-     * loses the cut-away region to opaque black (the C.1d fix — masked
+     * loses the cut-away region to opaque black (the C.1d fix -- masked
      * Save-as previously baked black corners). Otherwise it follows the
      * source MIME (PNG stays PNG, everything else -> JPEG, the two formats
      * the underlying canvas reliably encodes).

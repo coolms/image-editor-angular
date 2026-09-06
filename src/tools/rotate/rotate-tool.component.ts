@@ -10,12 +10,12 @@ import { ImageEditorStateService } from '../../services/image-editor-state.servi
  *
  * Two interaction modes side-by-side:
  *
- *   - **Quick presets** (90° CCW, 90° CW, 180°). Each button calls
+ *   - **Quick presets** (90 deg CCW, 90 deg CW, 180 deg). Each button calls
  *     `engine.rotate(degrees)` immediately (relative rotation), which
- *     pushes a single command. Pressing 90° CW four times returns to
+ *     pushes a single command. Pressing 90 deg CW four times returns to
  *     the original orientation, with four entries in the undo stack.
  *
- *   - **Free rotation slider** (-180..+180 in 1° steps). The slider's
+ *   - **Free rotation slider** (-180..+180 in 1 deg steps). The slider's
  *     value is bound to the live image angle (`state.imageRotation`)
  *     so it stays in sync with mouse-driven rotations on the canvas.
  *     During a drag we use the same preview / commit cycle the

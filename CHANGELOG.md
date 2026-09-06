@@ -9,7 +9,7 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
-## 2.0.0-alpha.3 — 2026-09-03
+## 2.0.0-alpha.3 -- 2026-09-03
 
 **A pre-release, carrying no compatibility promise.** Published under the
 `alpha` dist-tag.
@@ -26,7 +26,7 @@ chunk.
 ### Fixed
 
 - The Shapes tool had no icon. Its class named an icon Bootstrap Icons does not
-  define, which renders nothing and reports nothing — measured, it behaved
+  define, which renders nothing and reports nothing -- measured, it behaved
   identically to a class invented at random.
 - The roadmap listed Shapes as planned when it ships, and the feature list
   omitted the insert tools entirely.

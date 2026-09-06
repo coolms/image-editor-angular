@@ -41,7 +41,7 @@ import type { ImageEditorEngine }  from '../engine/image-editor-engine.interface
  * `static: true` for its container ViewChild, so by the time this
  * component's `ngAfterViewInit` runs the inner `<div #container>`
  * exists. The engine adapter is created against that element and the
- * image is loaded before `engineReady` emits — consumers never see
+ * image is loaded before `engineReady` emits -- consumers never see
  * an unloaded engine.
  */
 @Component({
@@ -84,7 +84,7 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
     constructor() {
         // Register the beta.4a transform tools. The registry is
         // `providedIn: 'root'`, so registering here is idempotent across
-        // multiple shell instances — re-registering an id replaces the
+        // multiple shell instances -- re-registering an id replaces the
         // existing entry, and metadata is identical between instances.
         const registry = inject(ToolRegistryService);
         registry.register({
@@ -119,7 +119,7 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
             component: ResizeToolComponent,
         });
         // C.1c: Mask clips the selected layer (or the base image) to a
-        // shape. Sits last in Transform — it's applied over whatever
+        // shape. Sits last in Transform -- it's applied over whatever
         // crop / rotate / resize produced.
         registry.register({
             id:        'mask',
@@ -160,7 +160,7 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
         });
 
         // beta.4b: Filter tools. The shared SliderFilterComponent and
-        // ToggleFilterComponent classes back every filter — only the
+        // ToggleFilterComponent classes back every filter -- only the
         // `config` input differs. ToolMetadata's `inputs` map carries
         // the per-filter config, which the right-sidebar pipes
         // through `NgComponentOutlet`'s `inputs` binding.
@@ -211,7 +211,7 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
      * make sure no tool is mid-edit (e.g., user forgot to Apply a
      * crop). Setting `activeTool` to `null` destroys the properties
      * component, whose `ngOnDestroy` runs the tool's deactivation
-     * (e.g., `exitCropMode()`) — so the export captures clean canvas
+     * (e.g., `exitCropMode()`) -- so the export captures clean canvas
      * pixels with no overlay.
      *
      * The adapter's `exportDataUrl()` also defensively calls

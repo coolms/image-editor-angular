@@ -9,13 +9,13 @@ import type { Size } from '../../types/geometry.types';
 /**
  * Properties panel for the Resize tool.
  *
- * Commit-style — no live preview. Live-resizing the canvas on every
+ * Commit-style -- no live preview. Live-resizing the canvas on every
  * keystroke would jank the editor, particularly for large images
  * where each resize is a full image-data rewrite. The user changes
  * the numeric fields, optionally toggles the aspect lock, then
  * commits with Apply.
  *
- * Aspect lock — captured against the original (pre-tool) dimensions
+ * Aspect lock -- captured against the original (pre-tool) dimensions
  * rather than the current input values so that toggling the lock
  * after free-form edits doesn't snap to a freshly-distorted ratio.
  * When width changes with the lock on, height auto-fills to
@@ -52,7 +52,7 @@ export class ResizeToolComponent implements ImageEditorTool {
      */
     private readonly userDirty = signal<boolean>(false);
 
-    /** Live image dimensions in canvas-coords (natural × |scale|). */
+    /** Live image dimensions in canvas-coords (natural x |scale|). */
     private readonly liveSize = computed<Size>(() => {
         const size = this.state.canvasSize();
         if (size === null) return { width: 0, height: 0 };
