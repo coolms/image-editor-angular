@@ -58,6 +58,14 @@ export interface CoolmsImageEditorVfsContext {
         readonly path:        string;
         /** Caller's effective write permission on the file (mirrors `VfsNodeDto.permissions.write`). */
         readonly canWrite:    boolean;
+        /**
+         * Offered when `canWrite` is false: what Save does INSTEAD of being
+         * dead (ADR-184, the client requirement, point 2). The caller asks
+         * the server for elevation and resolves true when the session has
+         * it; the host then treats the file as writable and saves. Absent,
+         * Save is disabled as before. The host decides nothing itself.
+         */
+        readonly requestWrite?: () => Promise<boolean>;
         /** URL the engine loads via `loadImage(url)`. */
         readonly sourceUrl:   string;
         /** Display label in the dialog header and default save-as filename. */

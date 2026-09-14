@@ -97,12 +97,31 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
 
     readonly engineReadyOk = signal<boolean>(false);
     readonly isSaving      = computed(() => this.state() === 'saving');
-    /** Save (overwrite) is gated on engine readiness AND, for VFS context, write permission. */
+    /**
+     * Set once the caller's `requestWrite` resolved true: the server elevated
+     * the session, so the flag it computed before no longer describes it.
+     */
+    private readonly writeGranted = signal<boolean>(false);
+
+    /** Whether the VFS file is writable: the flag, or an elevation granted since. */
+    private readonly canWrite = computed(() => {
+        const data = this.data;
+        return data.context !== 'vfs' || data.node.canWrite || this.writeGranted();
+    });
+
+    /**
+     * Save (overwrite) is gated on engine readiness AND, for VFS context,
+     * write permission -- unless the caller offered `requestWrite`, in which
+     * case the button stays live and asks for elevation instead of sitting
+     * dead (ADR-184).
+     */
     readonly canSave       = computed(() => {
         if (!this.engineReadyOk() || this.state() !== 'editing') return false;
+        return this.canWrite() || this.canRequestWrite();
+    });
+    private readonly canRequestWrite = computed(() => {
         const data = this.data;
-        if (data.context === 'vfs' && !data.node.canWrite) return false;
-        return true;
+        return data.context === 'vfs' && !!data.node.requestWrite;
     });
     /** Save as is gated only on engine readiness -- even read-only sources can be saved as new. */
     readonly canSaveAs     = computed(
@@ -247,6 +266,15 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
 
     async onSave(): Promise<void> {
         if (!this.canSave()) return;
+
+        // The flag said read-only and the caller offered a way out: ask.
+        // A decline leaves everything as it was, dialog included.
+        if (!this.canWrite()) {
+            const data = this.data;
+            const request = data.context === 'vfs' ? data.node.requestWrite : undefined;
+            if (!request || !(await request())) return;
+            this.writeGranted.set(true);
+        }
 
         // Warn when transparency forces a JPEG -> PNG format change on
         // an in-place overwrite (C.1d) so it isn't a silent surprise.
