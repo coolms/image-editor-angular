@@ -12,7 +12,7 @@ import type { FilterParams } from '../../types/filter.types';
  * Generic slider-driven filter tool (Brightness, Contrast,
  * Saturation, Blur).
  *
- * Live preview model — each slider drag applies the filter to the
+ * Live preview model -- each slider drag applies the filter to the
  * canvas immediately so the user sees the change in real time. The
  * undo stack stays clean by undoing the previous preview before
  * applying the new one: at any moment during a preview session the
@@ -25,13 +25,13 @@ import type { FilterParams } from '../../types/filter.types';
  *   cancel -> undo() the in-flight preview
  *           -> clearRedoStack()
  *
- * Coalescing — slider `input` events fire much faster than each
+ * Coalescing -- slider `input` events fire much faster than each
  * undo+apply cycle can finish (especially for Blur on large images).
  * The `inFlight` guard drops intermediate values; only the most
  * recent slider position is rendered. The stale ones are silently
  * abandoned, so the UI never falls behind the pointer.
  *
- * Identity-value short-circuit — when the slider sits at `default`
+ * Identity-value short-circuit -- when the slider sits at `default`
  * (typically 0), the tool removes the filter entirely instead of
  * applying an identity pass. This means the pre-tool canvas state
  * is byte-equal to the "slider returned to zero" state.

@@ -44,14 +44,14 @@ export interface EngineEvents {
     readonly objectDeactivated: void;
 
     /**
-     * The layer stack changed — a shape / text layer was added,
+     * The layer stack changed -- a shape / text layer was added,
      * removed, reordered, or had its visibility / opacity toggled.
      * Carries no payload: consumers re-pull `getLayers()`. (C.1)
      */
     readonly layersChanged: void;
 
     /**
-     * The active (selected) layer changed — to another layer, or to
+     * The active (selected) layer changed -- to another layer, or to
      * none. `id` is the engine's stable layer id; `kind` lets the
      * sidebar decide which style panel is relevant. Distinct from
      * `objectActivated`, which predates the layer model and carries
@@ -64,7 +64,7 @@ export interface EngineEvents {
 
     /**
      * Raw pointer activity in SCENE coordinates (canvas space with the
-     * viewport zoom/pan factored out — the same space `getImageBounds()`
+     * viewport zoom/pan factored out -- the same space `getImageBounds()`
      * and `getShapeGeometry()` report in). The annotation seam for
      * consumers that implement their own draw-by-drag interactions
      * (e.g. the ImageMap region authoring page): `down`->`move`->`up`

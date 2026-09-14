@@ -7,7 +7,7 @@ import type { LayerInfo } from '../../types/layer.types';
 /**
  * Layers panel (C.1). Lists the stack top-most first: select, show /
  * hide, reorder, delete, and adjust the selected layer's opacity. The
- * base image is the locked floor — it can't be deleted or restacked.
+ * base image is the locked floor -- it can't be deleted or restacked.
  */
 @Component({
     selector: 'coolms-image-editor-layers-panel',

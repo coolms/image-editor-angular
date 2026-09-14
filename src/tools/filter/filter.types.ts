@@ -8,7 +8,7 @@ import type { FilterName, FilterParams } from '../../types/filter.types';
  *
  * `default` is the value at which the filter is treated as "off"
  * (typically 0). When the slider sits at the default, the tool
- * removes the filter entirely instead of applying an identity pass —
+ * removes the filter entirely instead of applying an identity pass --
  * keeps the canvas pixel-perfect equal to the pre-tool state when
  * the user lands back on zero.
  */

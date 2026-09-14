@@ -4,12 +4,12 @@
  * Accepts either a bare SVG path `d` string or a full SVG document
  * (pasted markup or the text of an uploaded `.svg` file) and returns a
  * single combined path `d` string the engine can hand to fabric's
- * `new Path(d)` as a clipPath — or a user-facing error message.
+ * `new Path(d)` as a clipPath -- or a user-facing error message.
  *
  * Security model: the output is ALWAYS pure path geometry, consumed only
  * by `new Path(d)` and NEVER injected as HTML, so no `<script>`, event
  * handler, or external reference (`<image href>`, `<use href>`) can
- * survive into anything executable — they're simply never read. We also
+ * survive into anything executable -- they're simply never read. We also
  * parse with `DOMParser` into a detached `image/svg+xml` document, which
  * neither executes scripts nor fetches external resources. As an
  * explicit up-front signal we still reject markup that carries scripts,
@@ -18,20 +18,20 @@
  * Every drawable element (path / rect / circle / ellipse / polygon /
  * polyline) is flattened to path commands and concatenated; everything
  * else is ignored ("paths only"). Per-element `transform` attributes and
- * non-geometry elements are NOT applied — flatten transforms in your
+ * non-geometry elements are NOT applied -- flatten transforms in your
  * source SVG first if a mask looks off. Fabric-free and Angular-free so
  * it stays trivially unit-testable and keeps the engine firewall intact.
  *
- * This file imports nothing — it relies only on browser DOM APIs.
+ * This file imports nothing -- it relies only on browser DOM APIs.
  */
 
-/** ~200 KB — generous for "a small SVG file", a guard against pathological input. */
+/** ~200 KB -- generous for "a small SVG file", a guard against pathological input. */
 const MAX_INPUT_LENGTH = 200_000;
 
 /**
  * Characters legal in SVG path `d` data: the command letters, digits,
  * sign / decimal / exponent, and separators. Anything outside this set
- * (notably `<`, `>`, `(`, `)`, quotes) is rejected — a defensive second
+ * (notably `<`, `>`, `(`, `)`, quotes) is rejected -- a defensive second
  * gate on top of "we only ever feed this to `new Path`".
  */
 const PATH_D_CHARS = /^[\sMmLlHhVvCcSsQqTtAaZz0-9eE.,+-]+$/;
@@ -60,7 +60,7 @@ export function extractSvgMaskPath(input: string): SvgMaskExtraction {
         return { ok: false, error:'SVG is too large (max ~200 KB).' };
     }
 
-    // Bare path data (no markup) — validate and use directly.
+    // Bare path data (no markup) -- validate and use directly.
     if (!raw.includes('<')) {
         if (!HAS_MOVE.test(raw) || !PATH_D_CHARS.test(raw)) {
             return { ok: false, error:'Not valid path data (expected something like "M0 0 L10 10 Z").' };
@@ -68,7 +68,7 @@ export function extractSvgMaskPath(input: string): SvgMaskExtraction {
         return { ok: true, d:normalise(raw) };
     }
 
-    // Full SVG markup — reject obviously unsafe content up front for a
+    // Full SVG markup -- reject obviously unsafe content up front for a
     // clear signal (the geometry-only extraction below is already safe).
     if (/<\s*script\b/i.test(raw) || /<\s*foreignObject\b/i.test(raw) || /\son[a-z]+\s*=/i.test(raw)) {
         return { ok: false, error:'SVG contains scripts or event handlers, which are not allowed.' };

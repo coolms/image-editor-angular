@@ -89,7 +89,7 @@ export interface ImageEditorEngine {
     /**
      * Apply a filter. Idempotent: re-calling with new params updates
      * the existing instance of that filter rather than stacking a new
-     * one. Parameter ranges are normalised — see FilterParams docblock.
+     * one. Parameter ranges are normalised -- see FilterParams docblock.
      */
     applyFilter(name: FilterName, params?: FilterParams): Promise<void>;
 
@@ -142,7 +142,7 @@ export interface ImageEditorEngine {
     /**
      * Read a shape layer's current scene-space geometry, reflecting
      * any interactive move / scale the user applied. Rects report the
-     * axis-aligned box (rotation is not representable — pair with
+     * axis-aligned box (rotation is not representable -- pair with
      * `lockRotation`); ellipses report center + scaled radii; polygons
      * report fully-transformed vertices. `null` for unknown ids, the
      * base image, or non-shape layers.
@@ -172,7 +172,7 @@ export interface ImageEditorEngine {
     /**
      * Insert a new draggable vertex into the polygon `id` currently in
      * vertex-edit mode, at the point on its outline NEAREST to the scene
-     * coordinate `(sceneX, sceneY)` — a collinear insert, so the polygon's
+     * coordinate `(sceneX, sceneY)` -- a collinear insert, so the polygon's
      * shape is unchanged, it just gains a handle the author can then drag.
      * The controls are rebuilt (re-indexed) and the insert is undoable.
      * Returns `false` (no-op) if `id` is not the polygon currently in
@@ -188,7 +188,7 @@ export interface ImageEditorEngine {
      * own size). The controls are rebuilt (re-indexed) and the removal is
      * undoable. Returns `false` (no-op) if `id` is not the polygon in
      * vertex-edit mode, if removing would drop below the 3-vertex minimum a
-     * polygon requires, OR if the coordinate is too far from any vertex — so
+     * polygon requires, OR if the coordinate is too far from any vertex -- so
      * a caller can route a double-click to this FIRST and fall through to
      * {@link addVertexAt} (which projects onto the outline) when it returns
      * `false`. Intended to be wired to a double-click on a vertex handle.
@@ -219,7 +219,7 @@ export interface ImageEditorEngine {
 
     /**
      * Restack a layer. `up`/`down` move one step; `front`/`back` jump
-     * to the extremes. The base image is pinned to the bottom — other
+     * to the extremes. The base image is pinned to the bottom -- other
      * layers can't sink below it.
      */
     reorderLayer(id: string, direction: 'up' | 'down' | 'front' | 'back'): void;
@@ -227,7 +227,7 @@ export interface ImageEditorEngine {
     /**
      * Read the active object's editable style props (`fill`, `stroke`,
      * `strokeWidth`, `opacity`, plus font props for text). Returns
-     * `null` when no object — or the base image — is selected.
+     * `null` when no object -- or the base image -- is selected.
      */
     getActiveObjectProps(): ObjectProps | null;
 
@@ -257,15 +257,15 @@ export interface ImageEditorEngine {
     /**
      * The active non-image layer's rotation + flip state, so the
      * Rotate / Flip tools can bind to the selected layer rather than
-     * the base image. Returns `null` when the base image — or nothing
-     * — is the active object (the tools fall back to image state).
+     * the base image. Returns `null` when the base image -- or nothing
+     * -- is the active object (the tools fall back to image state).
      */
     getActiveLayerTransform(): { angle: number; flipX: boolean; flipY: boolean } | null;
 
     /**
      * Clip the mask target to a shape (single undo command). The target
      * is the active non-image layer when one is selected, otherwise the
-     * base image — so selecting a layer masks it, selecting nothing (or
+     * base image -- so selecting a layer masks it, selecting nothing (or
      * the Background) masks the photo. `shape: 'none'` clears the mask.
      */
     setMask(spec: MaskSpec): void;
@@ -298,7 +298,7 @@ export interface ImageEditorEngine {
     /**
      * Whether the flattened render contains any transparency, so the
      * save flow can force a PNG export instead of flattening a masked /
-     * transparent image onto an opaque (JPEG) background — which loses
+     * transparent image onto an opaque (JPEG) background -- which loses
      * the cut-away region to opaque black (C.1d). True when the base
      * image or any visible layer carries a mask (`clipPath`), or when
      * the flattened pixels contain a non-opaque alpha value. Cheap for
@@ -323,7 +323,7 @@ export interface ImageEditorEngine {
 
     /**
      * Set the viewport zoom centred on the canvas. Pure rendering
-     * concern — does not modify image data, does not push to the
+     * concern -- does not modify image data, does not push to the
      * undo stack. The exported bytes are independent of zoom level.
      *
      * `scale = 1` is 100% (one canvas pixel per CSS pixel). Values

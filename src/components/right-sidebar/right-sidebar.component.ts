@@ -11,7 +11,7 @@ import type { ToolMetadata } from '../../tools/tool.types';
  *
  * Renders the registered tools grouped by category (beta.4a ships only
  * the `transform` group). The active tool's properties component is
- * mounted into the lower slot via `NgComponentOutlet` — that
+ * mounted into the lower slot via `NgComponentOutlet` -- that
  * component's lifecycle (`ngOnInit` / `ngOnDestroy`) drives the
  * tool's activation hooks, so the sidebar stays a dumb shell.
  *
@@ -41,7 +41,7 @@ export class RightSidebarComponent {
         () => this.registry.byCategory('filter'),
     );
 
-    /** Insert tools — shapes / text (C.1). */
+    /** Insert tools -- shapes / text (C.1). */
     protected readonly insertTools = computed<ToolMetadata[]>(
         () => this.registry.byCategory('insert'),
     );
