@@ -113,7 +113,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
      * Save (overwrite) is gated on engine readiness AND, for VFS context,
      * write permission -- unless the caller offered `requestWrite`, in which
      * case the button stays live and asks for elevation instead of sitting
-     * dead (ADR-184).
+     * dead (the control stays live and the server decides).
      */
     readonly canSave       = computed(() => {
         if (!this.engineReadyOk() || this.state() !== 'editing') return false;

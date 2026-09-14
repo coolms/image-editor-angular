@@ -60,7 +60,7 @@ export interface CoolmsImageEditorVfsContext {
         readonly canWrite:    boolean;
         /**
          * Offered when `canWrite` is false: what Save does INSTEAD of being
-         * dead (ADR-184, the client requirement, point 2). The caller asks
+         * dead (the elevation client requirement, point 2). The caller asks
          * the server for elevation and resolves true when the session has
          * it; the host then treats the file as writable and saves. Absent,
          * Save is disabled as before. The host decides nothing itself.
