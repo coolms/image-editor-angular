@@ -22,6 +22,9 @@
     "engines": {
         "node": "^22.22.3 || ^24.15.0 || >=26"
     },
+    "bugs": {
+        "url": "https://github.com/coolms/image-editor-angular/issues"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/coolms/image-editor-angular.git"
