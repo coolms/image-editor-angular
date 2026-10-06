@@ -131,7 +131,11 @@ import { extractSvgMaskPath } from './svg-mask.util';
             color: var(--cms-text); font-family: var(--cms-font-mono, monospace);
             font-size: .75rem; line-height: 1.4;
         }
-        .svg-input:focus { outline: none; border-color: var(--cms-accent); }
+        .svg-input:focus {
+            outline: none;
+            border-color: var(--cms-focus-ring, #7c4d00);
+            box-shadow: 0 0 0 1px var(--cms-focus-ring, #7c4d00);
+        }
         .svg-actions { display: flex; gap: 6px; }
         .svg-file-btn, .svg-apply-btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 6px;

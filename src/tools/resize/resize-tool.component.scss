@@ -26,13 +26,13 @@
         overflow: hidden;
 
         &:focus-within {
-            border-color: var(--cms-accent);
-            /* Accent at 15% alpha — matches the focus-ring pattern
-             * used across the project's main styles.scss
-             * (.cms-input, .cms-select, .form-control etc.). When
-             * promoted to a `--cms-accent-focus-ring` token at the
-             * project level, this rule follows automatically. */
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--cms-accent) 15%, transparent);
+            border-color: var(--cms-focus-ring, #7c4d00);
+            /* The field's focus, as every field's in the admin's
+             * styles.scss (.cms-input, .cms-select, .form-control):
+             * its edge and a 1px ring in --cms-focus-ring, 2px in all,
+             * 3:1 or more against what surrounds it (Dmitry,
+             * 2026-10-06, (a)). */
+            box-shadow: 0 0 0 1px var(--cms-focus-ring, #7c4d00);
         }
     }
 
@@ -90,7 +90,7 @@
         }
 
         &:focus-visible {
-            outline: 2px solid var(--cms-accent);
+            outline: 2px solid var(--cms-focus-ring, #7c4d00);
             outline-offset: 1px;
         }
 
