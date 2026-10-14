@@ -27,6 +27,16 @@
             </button>
         </div>
     </header>
+    @if (changedElsewhere(); as change) {
+        <div class="image-editor-host__notice" role="status">
+            <i class="bi bi-exclamation-triangle"></i>
+            @if (change === 'deleted') {
+                This image was deleted since you opened it. Save your edits as a new image.
+            } @else {
+                This image was saved by someone else since you opened it. Save your edits as a new image.
+            }
+        </div>
+    }
 
     <div class="image-editor-host__body">
         @if (resolvedSourceUrl(); as src) {

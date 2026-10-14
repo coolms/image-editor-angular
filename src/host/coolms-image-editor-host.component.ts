@@ -3,6 +3,7 @@ import {
     OnDestroy, OnInit, ViewChild,
     computed, effect, inject, signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { HttpClient } from '@angular/common/http';
 import { Dialog, DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
@@ -18,7 +19,13 @@ import {
 } from './coolms-image-editor-host.types';
 import type { ImageEditorEngine } from '../engine/image-editor-engine.interface';
 
-import { ConfirmDialogService, EscCoordinatorService, ToastService, UnsavedChangesService } from '@coolms/ui-angular';
+import {
+    ConfirmDialogService,
+    EscCoordinatorService,
+    ToastService,
+    UnsavedChangesService,
+    VFS_NODE_WATCH,
+} from '@coolms/ui-angular';
 import { ImageEditorHttpService } from '../services/image-editor-http.service';
 
 type HostState = 'preparing' | 'editing' | 'saving' | 'error';
@@ -69,6 +76,12 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
     private readonly destroyRef  = inject(DestroyRef);
 
     protected readonly data = inject<CoolmsImageEditorHostData>(DIALOG_DATA);
+
+    /**
+     * The file was changed or deleted elsewhere while the editor is open (2026-10-14: "the editor says so, from the VFS
+     * change event"). Said above the canvas; Save then answers 412 / 404 and goes to "Save as".
+     */
+    protected readonly changedElsewhere = signal<'changed' | 'deleted' | null>(null);
 
     readonly state        = signal<HostState>('preparing');
     readonly errorMessage = signal<string | null>(null);
@@ -185,6 +198,17 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
     }
 
     constructor() {
+        const watch = inject(VFS_NODE_WATCH, { optional: true });
+        const data = this.data;
+        if (watch && data.context === 'vfs' && data.node.id) {
+            watch({ id: data.node.id, path: data.node.path }).pipe(takeUntilDestroyed()).subscribe(change => {
+                if (change.kind === 'deleted') {
+                    this.changedElsewhere.set('deleted');
+                } else if (change.version == null || change.version !== data.node.version) {
+                    this.changedElsewhere.set('changed');
+                }
+            });
+        }
         // beforeunload half: a tab close cannot be intercepted by
         // the Cancel button. Disposed with the component so a closed editor
         // stops voting.
@@ -371,6 +395,16 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
             this.dialogRef.close(result);
         } catch (error) {
             this.state.set('editing');
+            const status = error !== null && typeof error === 'object' ? (error as { status?: unknown }).status : undefined;
+            if (mode === 'overwrite' && this.data.context === 'vfs' && (status === 412 || status === 404)) {
+                // The file moved on since it was opened: the edits go to a new image, never over it.
+                this.toast.info(
+                    status === 412 ? 'This image was changed since you opened it' : 'This image was deleted since you opened it',
+                    'Save your edits as a new image',
+                );
+                await this.onSaveAs();
+                return;
+            }
             this.toast.error('Save failed: ' + this.describeError(error));
             console.error('CoolmsImageEditorHost save failed:', error);
         }
@@ -438,6 +472,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
                 path:      data.node.path,
                 overwrite: true,
                 filename:  data.node.filename,
+                ifMatch:   data.node.version ?? null,
             });
             return { kind: 'saved', mode: 'overwrite', vfsPath: data.node.path };
         }
