@@ -21,6 +21,7 @@ import type {
     SliderFilterConfig, ToggleFilterConfig,
 } from '../tools/filter/filter.types';
 import type { ImageEditorEngine }  from '../engine/image-editor-engine.interface';
+import { bindKeys } from '@coolms/ui-angular';
 
 /**
  * Three-pane shell for the CoolMS image editor.
@@ -82,6 +83,12 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
     private destroyed = false;
 
     constructor() {
+        // Delete removes the editor's own selection and nothing else (2026-10-14: Del in the editor deleted the file
+        // under it). Bound to the editor's layer through the keyboard scope: it fires only while the editor is the
+        // topmost surface, and never while the person types in a field or edits text on the canvas (fabric edits
+        // text through a hidden textarea, which is a text field to the scope).
+        bindKeys(event => this.onKeydown(event));
+
         // Register the beta.4a transform tools. The registry is
         // `providedIn: 'root'`, so registering here is idempotent across
         // multiple shell instances -- re-registering an id replaces the
@@ -256,6 +263,21 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
         } catch (err) {
             this.failed.emit(err instanceof Error ? err : new Error(String(err)));
         }
+    }
+
+    /**
+     * Delete on the selected shape or text layer removes it (one undoable step, as the Layers panel's delete). With
+     * nothing selected, or the base image selected, it does nothing. True when it removed a layer.
+     */
+    onKeydown(event: KeyboardEvent): boolean {
+        if (event.key !== 'Delete') return false;
+        const engine = this.state.engine();
+        const id = engine?.getActiveLayerId() ?? null;
+        if (engine === null || id === null) return false;
+        const layer = this.state.layers().find(l => l.id === id);
+        if (layer === undefined || layer.locked) return false;
+        engine.removeLayer(id);
+        return true;
     }
 
     ngOnDestroy(): void {
