@@ -13,6 +13,15 @@ predate this file would be a worse record than not having them.
 
 ### Added
 
+- Delete acts on the editor's own selection: it removes the selected shape or
+  text layer, and does nothing when nothing, or the base image, is selected.
+  It is bound to the editor's own layer through the keyboard scope, so it never
+  reaches a page beneath the editor. Needs `@coolms/ui-angular` 2.0.0-alpha.4.
+- A save names the version it opened (`If-Match`): when the image changed
+  meanwhile (412) or was deleted (404), the editor says so and offers Save as,
+  never writing over the newer file or making the deleted one again; a change
+  made elsewhere is said at once, through the host's `VFS_NODE_WATCH`. Needs
+  `@coolms/ui-angular` with `VFS_NODE_WATCH`.
 - Declares `bugs` so a page imported from this package, and the catalogue,
   know where a correction is filed. The registry filled the gap from GitHub when
   the manifest was silent; the declared field is the one that holds on any

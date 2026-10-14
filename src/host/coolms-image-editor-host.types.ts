@@ -56,6 +56,14 @@ export interface CoolmsImageEditorVfsContext {
     readonly node: {
         /** Absolute VFS path of the file. */
         readonly path:        string;
+        /** The file's node id: the host's file watch follows it to say when it changes or goes elsewhere. */
+        readonly id?:         string;
+        /**
+         * The file's version when the editor opened it (its contentHash). Save sends it as If-Match: a file saved
+         * meanwhile answers 412 and one deleted 404 -- neither overwritten nor made again (2026-10-14). Absent, Save
+         * writes as before.
+         */
+        readonly version?:    string | null;
         /** Caller's effective write permission on the file (mirrors `VfsNodeDto.permissions.write`). */
         readonly canWrite:    boolean;
         /**

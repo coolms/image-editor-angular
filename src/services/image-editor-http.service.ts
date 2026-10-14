@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
 /**
@@ -62,14 +62,18 @@ export class ImageEditorHttpService {
         readonly path:      string;
         readonly overwrite: boolean;
         readonly filename:  string;
+        /** The version the edit was based on: sent as If-Match, so a newer file answers 412 and a deleted one 404. */
+        readonly ifMatch?:  string | null;
     }): Promise<VfsSaveResponse> {
         const form = new FormData();
         form.append('file', params.blob, params.filename);
         form.append('path', params.path);
         form.append('overwrite', params.overwrite ? '1' : '0');
 
+        const headers = params.ifMatch ? new HttpHeaders({ 'If-Match': `"${params.ifMatch}"` }) : undefined;
+
         return firstValueFrom(
-            this.http.post<VfsSaveResponse>('/api/v1/vfs/files/binary', form),
+            this.http.post<VfsSaveResponse>('/api/v1/vfs/files/binary', form, { headers }),
         );
     }
 }

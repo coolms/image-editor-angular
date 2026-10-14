@@ -28,6 +28,13 @@
     border-radius: 0;
 }
 
+.image-editor-host__notice {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 16px; font-size: .8125rem;
+    background: var(--cms-warning-light); color: var(--cms-warning-text);
+    border-bottom: 1px solid var(--cms-border);
+}
+
 .image-editor-host {
     flex: 1;
     min-height: 0;
