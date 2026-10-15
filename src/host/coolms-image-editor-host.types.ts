@@ -58,12 +58,6 @@ export interface CoolmsImageEditorVfsContext {
         readonly path:        string;
         /** The file's node id: the host's file watch follows it to say when it changes or goes elsewhere. */
         readonly id?:         string;
-        /**
-         * The file's version when the editor opened it (its contentHash). Save sends it as If-Match: a file saved
-         * meanwhile answers 412 and one deleted 404 -- neither overwritten nor made again (2026-10-14). Absent, Save
-         * writes as before.
-         */
-        readonly version?:    string | null;
         /** Caller's effective write permission on the file (mirrors `VfsNodeDto.permissions.write`). */
         readonly canWrite:    boolean;
         /**
@@ -74,7 +68,13 @@ export interface CoolmsImageEditorVfsContext {
          * Save is disabled as before. The host decides nothing itself.
          */
         readonly requestWrite?: () => Promise<boolean>;
-        /** URL the engine loads via `loadImage(url)`. */
+        /**
+         * Where the file's own bytes are read, and with them their version (the response's ETag): the version an
+         * overwrite names as If-Match is the version of the pixels the editor opened, from that one read -- a file
+         * changed after it was listed is edited as it is now, and a copy served from a cache carries its own older
+         * version, so its save is refused (412), never written over the newer file (2026-10-15). A read that names no
+         * version leaves Save off: the edits can go to a new image only.
+         */
         readonly sourceUrl:   string;
         /** Display label in the dialog header and default save-as filename. */
         readonly filename:    string;

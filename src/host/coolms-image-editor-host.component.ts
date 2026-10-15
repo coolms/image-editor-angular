@@ -130,8 +130,12 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
      */
     readonly canSave       = computed(() => {
         if (!this.engineReadyOk() || this.state() !== 'editing') return false;
+        // A VFS file whose read named no version is never written over: there is nothing to name as If-Match.
+        if (this.data.context === 'vfs' && this.readVersion() === null) return false;
         return this.canWrite() || this.canRequestWrite();
     });
+    /** The version of the bytes the editor opened: the ETag of the read that delivered them. */
+    private readonly readVersion = signal<string | null>(null);
     private readonly canRequestWrite = computed(() => {
         const data = this.data;
         return data.context === 'vfs' && !!data.node.requestWrite;
@@ -204,7 +208,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
             watch({ id: data.node.id, path: data.node.path }).pipe(takeUntilDestroyed()).subscribe(change => {
                 if (change.kind === 'deleted') {
                     this.changedElsewhere.set('deleted');
-                } else if (change.version == null || change.version !== data.node.version) {
+                } else if (change.version == null || change.version !== this.readVersion()) {
                     this.changedElsewhere.set('changed');
                 }
             });
@@ -256,9 +260,13 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
             // the engine a same-origin blob: URL it can render normally.
             // Media URLs are public, so we pass them through unchanged.
             if (this.data.context === 'vfs') {
-                const blob = await firstValueFrom(
-                    this.http.get(this.data.node.sourceUrl, { responseType: 'blob' }),
+                // The pixels and their version from ONE read: the ETag of exactly these bytes is what an overwrite
+                // names, never the listing's version (a separate, earlier read).
+                const response = await firstValueFrom(
+                    this.http.get(this.data.node.sourceUrl, { responseType: 'blob', observe: 'response' }),
                 );
+                this.readVersion.set(versionOf(response.headers.get('ETag')));
+                const blob = response.body ?? new Blob();
                 this.ownedObjectUrl = URL.createObjectURL(blob);
                 this.resolvedSourceUrl.set(this.ownedObjectUrl);
             } else {
@@ -472,7 +480,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
                 path:      data.node.path,
                 overwrite: true,
                 filename:  data.node.filename,
-                ifMatch:   data.node.version ?? null,
+                ifMatch:   this.readVersion(),
             });
             return { kind: 'saved', mode: 'overwrite', vfsPath: data.node.path };
         }
@@ -564,4 +572,10 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
         const right = name.replace(/^\/+/, '');
         return `${left}/${right}`;
     }
+}
+
+/** The version an ETag names: `"abc"` and `W/"abc"` are both `abc`; no ETag, no version. */
+export function versionOf(etag: string | null): string | null {
+    const value = (etag ?? '').trim().replace(/^W\//, '').replace(/^"(.*)"$/, '$1');
+    return value === '' ? null : value;
 }

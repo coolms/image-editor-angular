@@ -27,6 +27,17 @@ predate this file would be a worse record than not having them.
   the manifest was silent; the declared field is the one that holds on any
   registry.
 
+### Changed
+
+- The version an overwrite names is the version of the pixels the editor
+  opened: the host reads the file's bytes and takes their version from the
+  same response (its `ETag`). The listing's version, a separate and earlier
+  read, is no longer part of the VFS host data (`node.version` is removed). A
+  file changed between the listing and the open is edited as it is now, and
+  bytes served from a cache name their own older version, so saving them over
+  the newer file is refused. A read that names no version leaves Save off;
+  Save as still works.
+
 ## 2.0.0-alpha.3 -- 2026-09-03
 
 **A pre-release, carrying no compatibility promise.** Published under the
