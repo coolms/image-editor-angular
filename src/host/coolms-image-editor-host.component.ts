@@ -56,6 +56,24 @@ type HostState = 'preparing' | 'editing' | 'saving' | 'error';
  * descriptive message (status code -> friendly label, or `.message`
  * fallback). The engine remains live throughout.
  */
+/**
+ * The format Save writes a source back as, or null when Save may not overwrite it: only PNG and
+ * JPEG, which the editor encodes as themselves. GIF (animated or not), SVG, TIFF, HEIC, BMP and WebP -- until its export
+ * is verified in every supported browser -- have Save as only: overwriting them would put PNG or JPEG bytes under their
+ * name, and an animation or vectors would be lost.
+ */
+export function writtenBackAs(mimeType: string): 'png' | 'jpeg' | null {
+    switch (mimeType.toLowerCase()) {
+        case 'image/png':
+            return 'png';
+        case 'image/jpeg':
+        case 'image/jpg':
+            return 'jpeg';
+        default:
+            return null;
+    }
+}
+
 @Component({
     selector: 'coolms-image-editor-host',
     standalone: true,
@@ -130,6 +148,8 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
      */
     readonly canSave       = computed(() => {
         if (!this.engineReadyOk() || this.state() !== 'editing') return false;
+        // Only a format the editor writes back as itself is overwritten; any other has Save as only.
+        if (!this.savesInItsOwnFormat()) return false;
         // An image whose read named no version is never written over: there is nothing to name as If-Match.
         if (this.readVersion() === null) return false;
         return this.canWrite() || this.canRequestWrite();
@@ -154,6 +174,12 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
     readonly mimeType = computed(
         () => this.data.context === 'media' ? this.data.asset.mimeType : this.data.node.mimeType,
     );
+    /** Whether Save may overwrite the source: the editor writes it back in its own format. */
+    readonly savesInItsOwnFormat = computed(() => writtenBackAs(this.mimeType()) !== null);
+    /** Why Save is off for this format, said on the button; null when it is not the format. */
+    readonly saveFormatNote = computed(() => this.savesInItsOwnFormat()
+        ? null
+        : 'Save writes an image back only as PNG or JPEG, in its own format. Use Save as for this one.');
 
     readonly dimensionsLabel = computed(() => {
         const dim = this.data.context === 'media'
@@ -319,18 +345,16 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
             this.writeGranted.set(true);
         }
 
-        // Warn when transparency forces a JPEG -> PNG format change on
-        // an in-place overwrite (C.1d) so it isn't a silent surprise.
-        const willConvertToPng =
-            this.contentWantsPng() && this.deriveFormat(this.mimeType(), false) !== 'png';
+        // An edit with transparent areas cannot be written back into a JPEG: overwriting would put PNG bytes under
+        // the JPEG's name. Nothing is overwritten; the edit goes to a new PNG through Save as.
+        if (this.contentWantsPng() && writtenBackAs(this.mimeType()) !== 'png') {
+            this.toast.info('This edit has transparent areas, which a JPEG cannot store. Save it as a new PNG.');
+            await this.onSaveAs();
+            return;
+        }
 
         const confirmRef = this.cdkDialog.open<boolean>(OverwriteConfirmDialogComponent, {
-            data: {
-                filename: this.filename(),
-                formatNote: willConvertToPng
-                    ? 'This edit has transparent areas, so it will be saved as PNG — the original format can’t store transparency.'
-                    : undefined,
-            },
+            data: { filename: this.filename() },
             backdropClass: 'cdk-overlay-dark-backdrop',
         });
         const confirmed = await firstValueFrom(confirmRef.closed);

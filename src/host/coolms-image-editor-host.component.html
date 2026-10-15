@@ -82,6 +82,7 @@
             <button type="button"
                     class="cms-btn cms-btn-primary"
                     [disabled]="!canSave()"
+                    [attr.title]="saveFormatNote()"
                     (click)="onSave()">
                 {{ isSaving() ? 'Saving…' : 'Save' }}
             </button>

@@ -60,6 +60,25 @@ chunk.
 
 ### Fixed
 
+- **Save overwrites only a PNG or a JPEG.** Save wrote JPEG bytes over every
+  source that was not a PNG: an SVG's vectors became pixels, a GIF lost its
+  animation, and the file's name and type no longer said what it held. Save
+  now overwrites only a PNG or a JPEG, which the editor writes back in the
+  same format; every other format -- GIF, SVG, TIFF, HEIC, BMP, and WebP until
+  its export is verified in every supported browser -- has Save as only, and
+  the Save button says why. A JPEG whose edit gained transparent areas is not
+  written over as PNG under its name: Save says so and opens Save as.
+  `writtenBackAs(mimeType)` names the format Save writes a source back as.
+- **A photo is saved upright.** Its EXIF orientation is applied when the
+  editor opens it, so the saved pixels are turned upright themselves. The
+  export carries no EXIF of its own; a JPEG export embeds an sRGB colour
+  profile, a PNG export none. The canvas the editor draws on is sRGB: a
+  Display P3 photo saved as JPEG loses its own profile, and its colours
+  beyond sRGB are clipped (measured, not yet changed). On a JPEG overwrite, a CoolMS backend that
+  carries the replaced photo's EXIF into the new file keeps the camera, the
+  dates and the location, sets the orientation to normal and removes the stale
+  embedded thumbnail. The location is kept: removing it is an action of its
+  own, never a side effect of a save.
 - The Shapes tool had no icon. Its class named an icon Bootstrap Icons does not
   define, which renders nothing and reports nothing -- measured, it behaved
   identically to a class invented at random.
