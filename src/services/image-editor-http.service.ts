@@ -40,6 +40,11 @@ export class ImageEditorHttpService {
         readonly blob:      Blob;
         readonly assetUuid: string;
         readonly filename:  string;
+        /**
+         * The version of the image the edit was based on: sent as If-Match, which the replace requires -- an asset
+         * replaced meanwhile answers 412 and a deleted one 404, never overwritten nor made again (2026-10-15).
+         */
+        readonly ifMatch:   string;
     }): Promise<MediaSaveResponse> {
         const form = new FormData();
         form.append('file', params.blob, params.filename);
@@ -48,6 +53,7 @@ export class ImageEditorHttpService {
             this.http.post<MediaSaveResponse>(
                 `/api/v1/media/${params.assetUuid}/replace`,
                 form,
+                { headers: new HttpHeaders({ 'If-Match': `"${params.ifMatch}"` }) },
             ),
         );
     }

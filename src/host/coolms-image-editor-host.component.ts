@@ -130,8 +130,8 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
      */
     readonly canSave       = computed(() => {
         if (!this.engineReadyOk() || this.state() !== 'editing') return false;
-        // A VFS file whose read named no version is never written over: there is nothing to name as If-Match.
-        if (this.data.context === 'vfs' && this.readVersion() === null) return false;
+        // An image whose read named no version is never written over: there is nothing to name as If-Match.
+        if (this.readVersion() === null) return false;
         return this.canWrite() || this.canRequestWrite();
     });
     /** The version of the bytes the editor opened: the ETag of the read that delivered them. */
@@ -259,14 +259,16 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
             // through HttpClient runs the auth interceptor, then we hand
             // the engine a same-origin blob: URL it can render normally.
             // Media URLs are public, so we pass them through unchanged.
-            if (this.data.context === 'vfs') {
+            // A file's bytes, or a media asset's when the caller says where they are read with their version.
+            const versionedSource = this.data.context === 'vfs' ? this.data.node.sourceUrl : this.data.asset.sourceUrl;
+            if (versionedSource !== undefined) {
                 // The pixels and their version from ONE read: the ETag of exactly these bytes is what an overwrite
                 // names, never the listing's version (a separate, earlier read).
                 // And never stale pixels in the first place: the read revalidates any copy the browser holds (the
                 // server answers 304 or the new bytes). `cache` is honoured by the fetch backend; the XHR backend the
                 // admin runs on reads the request's own Cache-Control. If-Match on save stays the backstop.
                 const response = await firstValueFrom(
-                    this.http.get(this.data.node.sourceUrl, {
+                    this.http.get(versionedSource, {
                         responseType: 'blob',
                         observe: 'response',
                         cache: 'no-cache',
@@ -277,7 +279,8 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
                 const blob = response.body ?? new Blob();
                 this.ownedObjectUrl = URL.createObjectURL(blob);
                 this.resolvedSourceUrl.set(this.ownedObjectUrl);
-            } else {
+            } else if (this.data.context === 'media') {
+                // No versioned read offered: shown from its public URL, and Save stays off (readVersion is null).
                 this.resolvedSourceUrl.set(this.data.asset.originalUrl);
             }
             this.state.set('editing');
@@ -412,7 +415,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
         } catch (error) {
             this.state.set('editing');
             const status = error !== null && typeof error === 'object' ? (error as { status?: unknown }).status : undefined;
-            if (mode === 'overwrite' && this.data.context === 'vfs' && (status === 412 || status === 404)) {
+            if (mode === 'overwrite' && (status === 412 || status === 404)) {
                 // The file moved on since it was opened: the edits go to a new image, never over it.
                 this.toast.info(
                     status === 412 ? 'This image was changed since you opened it' : 'This image was deleted since you opened it',
@@ -442,6 +445,8 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
                 blob,
                 assetUuid: data.asset.uuid,
                 filename:  this.ensureExtension(data.asset.filename, format),
+                // canSave admits an overwrite only with a version read.
+                ifMatch:   this.readVersion() ?? '',
             });
             return {
                 kind:      'saved',

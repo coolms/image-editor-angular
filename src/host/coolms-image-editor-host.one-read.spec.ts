@@ -24,6 +24,7 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
     const SOURCE = '/api/v1/vfs/files/preview?path=%2Fhome%2Fp%2Fpicture.png';
     let http: HttpTestingController | undefined;
     let writes: jasmine.Spy;
+    let replaces: jasmine.Spy;
 
     /**
      * A host for a file whose LISTING said version h1. The listing's version reaches the host only on an untyped
@@ -41,8 +42,28 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
             parentPath: '/home/p',
             dimensions: null,
         };
-        const data = { context: 'vfs', node: listed } as CoolmsImageEditorHostData;
+        return aHost({ context: 'vfs', node: listed } as CoolmsImageEditorHostData);
+    }
+
+    /** A host for a media asset whose bytes and version are read from $sourceUrl (or from its public URL alone). */
+    function aHostForAnAsset(sourceUrl: string | undefined): CoolmsImageEditorHostComponent {
+        return aHost({
+            context: 'media',
+            asset: {
+                uuid: 'a1',
+                originalUrl: '/media/library/photo.png',
+                sourceUrl,
+                filename: 'photo.png',
+                mimeType: 'image/png',
+                path: '/media/library/photo.png',
+                dimensions: null,
+            },
+        });
+    }
+
+    function aHost(data: CoolmsImageEditorHostData): CoolmsImageEditorHostComponent {
         writes = jasmine.createSpy('writeVfsFile').and.resolveTo({});
+        replaces = jasmine.createSpy('replaceMediaAsset').and.resolveTo({ id: 'a1' });
         TestBed.configureTestingModule({
             imports: [CoolmsImageEditorHostComponent],
             providers: [
@@ -51,7 +72,7 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
                 { provide: DIALOG_DATA, useValue: data },
                 { provide: DialogRef, useValue: { close: () => undefined } },
                 { provide: Dialog, useValue: { open: () => ({ closed: of(true) }) } },
-                { provide: ImageEditorHttpService, useValue: { writeVfsFile: writes } },
+                { provide: ImageEditorHttpService, useValue: { writeVfsFile: writes, replaceMediaAsset: replaces } },
                 { provide: ToastService, useValue: { success: () => undefined, error: () => undefined, info: () => undefined } },
                 { provide: EscCoordinatorService, useValue: { register: () => () => undefined } },
                 { provide: ConfirmDialogService, useValue: { open: () => of(true) } },
@@ -128,6 +149,28 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
         expect(await (await fetch(host.resolvedSourceUrl() ?? '')).text()).withContext('the pixels opened').toBe('the newer bytes');
         await host.onSave();
         expect(writes.calls.mostRecent().args[0]).toEqual(jasmine.objectContaining({ ifMatch: 'h2' }));
+    });
+
+    it('a media asset: the replace names the version of the pixels its read answered', async () => {
+        const host = aHostForAnAsset(SOURCE);
+        await open(host, '"m2"');
+
+        await host.onSave();
+
+        expect(replaces).toHaveBeenCalledTimes(1);
+        expect(replaces.calls.mostRecent().args[0]).toEqual(jasmine.objectContaining({ assetUuid: 'a1', ifMatch: 'm2' }));
+    });
+
+    it('a media asset shown from its public URL alone names no version, so it is never replaced', async () => {
+        const host = aHostForAnAsset(undefined);
+        await host.ngOnInit();
+        host.onEngineReady({ export: async () => new Blob(['edited']), hasAlpha: () => false } as unknown as ImageEditorEngine);
+
+        expect(host.canSave()).toBeFalse();
+        await host.onSave();
+
+        expect(replaces).not.toHaveBeenCalled();
+        expect(host.canSaveAs()).withContext('the edits can still go to a new image').toBeTrue();
     });
 
     it('reads an ETag as its version', () => {

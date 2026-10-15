@@ -29,8 +29,14 @@ export interface CoolmsImageEditorMediaContext {
     readonly asset: {
         /** Maps to `MediaAsset.id`; backend resolves the VFS node from it. */
         readonly uuid:        string;
-        /** Source URL the engine loads via `loadImage(url)`. */
+        /** Source URL the engine loads via `loadImage(url)` when no `sourceUrl` is given. */
         readonly originalUrl: string;
+        /**
+         * Where the asset's own bytes are read with their version (the response's ETag), as for a file: the version a
+         * replace names as If-Match is the version of the pixels opened, from that one read (2026-10-15). Without it
+         * the image is shown from `originalUrl`, which names no version, and Save is off: the edits go to a new image.
+         */
+        readonly sourceUrl?:  string;
         /** Display label in the dialog header and default save-as filename. */
         readonly filename:    string;
         /** Picks the export format (source MIME wins per the existing contract). */
