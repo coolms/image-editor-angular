@@ -72,7 +72,11 @@ chunk.
 - **A photo is saved upright.** Its EXIF orientation is applied when the
   editor opens it, so the saved pixels are turned upright themselves. The
   export carries no EXIF of its own; a JPEG export embeds an sRGB colour
-  profile, a PNG export none.
+  profile, a PNG export none. On a JPEG overwrite, a CoolMS backend that
+  carries the replaced photo's EXIF into the new file keeps the camera, the
+  dates and the location, sets the orientation to normal and removes the stale
+  embedded thumbnail. The location is kept: removing it is an action of its
+  own, never a side effect of a save.
 - The Shapes tool had no icon. Its class named an icon Bootstrap Icons does not
   define, which renders nothing and reports nothing -- measured, it behaved
   identically to a class invented at random.
