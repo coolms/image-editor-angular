@@ -72,7 +72,9 @@ chunk.
 - **A photo is saved upright.** Its EXIF orientation is applied when the
   editor opens it, so the saved pixels are turned upright themselves. The
   export carries no EXIF of its own; a JPEG export embeds an sRGB colour
-  profile, a PNG export none. On a JPEG overwrite, a CoolMS backend that
+  profile, a PNG export none. The canvas the editor draws on is sRGB: a
+  Display P3 photo saved as JPEG loses its own profile, and its colours
+  beyond sRGB are clipped (measured, not yet changed). On a JPEG overwrite, a CoolMS backend that
   carries the replaced photo's EXIF into the new file keeps the camera, the
   dates and the location, sets the orientation to normal and removes the stale
   embedded thumbnail. The location is kept: removing it is an action of its

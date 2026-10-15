@@ -183,7 +183,7 @@ describe('FabricEngineAdapter -- EXIF orientation is baked into the saved pixels
         expect(contains(saved, 'iCCP')).withContext('an iCCP chunk').toBeFalse();
     });
 
-    it('MEASURED: the canvas the editor draws on is sRGB, so a wider-gamut photo is clipped to sRGB', async () => {
+    it('MEASURED: the canvas the editor draws on is sRGB', async () => {
         engine = await FabricEngineAdapter.create({ container });
         await engine.loadImage(new Blob([await aWideJpeg()], { type: 'image/jpeg' }), 'photo.jpg');
 
@@ -193,4 +193,61 @@ describe('FabricEngineAdapter -- EXIF orientation is baked into the saved pixels
         expect(spaces.length).withContext('the editor drew on a canvas').toBeGreaterThan(0);
         expect(new Set(spaces)).toEqual(new Set(['srgb']));
     });
+
+    // A Display P3 photo, as a phone takes one: its own profile, and a red beyond what sRGB can show. P3's own red,
+    // read on a P3 canvas, is (255, 0, 0); sRGB's red read there is about (234, 51, 35).
+    it('fixture: the P3 photo carries a Display P3 profile and a red beyond sRGB', async () => {
+        const photo = await aP3Jpeg();
+
+        expect(contains(photo, 'ICC_PROFILE')).withContext('an ICC profile segment').toBeTrue();
+        expect(contains(photo, 'Display P3') || contains16(photo, 'Display P3')).withContext('the profile is Display P3').toBeTrue();
+        const [r, g, b] = await p3PixelAt(photo, 10, 10);
+        expect(r).withContext('red').toBeGreaterThan(245);
+        expect(g).withContext('green').toBeLessThan(20);
+        expect(b).withContext('blue').toBeLessThan(20);
+    });
+
+    it('MEASURED: a Display P3 photo saved as JPEG loses its profile, and its colours beyond sRGB are clipped', async () => {
+        engine = await FabricEngineAdapter.create({ container });
+        await engine.loadImage(new Blob([await aP3Jpeg()], { type: 'image/jpeg' }), 'photo.jpg');
+
+        const saved = new Uint8Array(await (await engine.export('jpeg')).arrayBuffer());
+
+        expect(contains(saved, 'Display P3') || contains16(saved, 'Display P3')).withContext('the P3 profile').toBeFalse();
+        expect(contains(saved, 'sRGB') || contains16(saved, 'sRGB')).withContext('an sRGB profile instead').toBeTrue();
+        // The red is sRGB's own now: read on a P3 canvas it is no longer P3's red, but sRGB's.
+        const [r, g, b] = await p3PixelAt(saved, 10, 10);
+        expect(r).withContext('red').toBeLessThan(245);
+        expect(g).withContext('green').toBeGreaterThan(30);
+        expect(b).withContext('blue').toBeGreaterThan(15);
+    });
 });
+
+/** A 40x20 JPEG drawn on a Display P3 canvas: its left half P3's own red, beyond sRGB; the right half white. */
+async function aP3Jpeg(): Promise<Uint8Array<ArrayBuffer>> {
+    const canvas = document.createElement('canvas');
+    canvas.width = 40;
+    canvas.height = 20;
+    const context = canvas.getContext('2d', { colorSpace: 'display-p3' });
+    if (context === null) throw new Error('no 2d context');
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, 40, 20);
+    context.fillStyle = 'color(display-p3 1 0 0)';
+    context.fillRect(0, 0, 20, 20);
+    const blob = await new Promise<Blob>((resolve, reject) =>
+        canvas.toBlob(b => (b ? resolve(b) : reject(new Error('no blob'))), 'image/jpeg', 0.95));
+    return new Uint8Array(await blob.arrayBuffer());
+}
+
+/** The pixel at (x, y) of a JPEG, decoded with its profile and read on a Display P3 canvas: 0-255 per channel. */
+async function p3PixelAt(jpeg: Uint8Array<ArrayBuffer>, x: number, y: number): Promise<[number, number, number]> {
+    const bitmap = await createImageBitmap(new Blob([jpeg], { type: 'image/jpeg' }));
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    const context = canvas.getContext('2d', { colorSpace: 'display-p3' });
+    if (context === null) throw new Error('no 2d context');
+    context.drawImage(bitmap, 0, 0);
+    const [r, g, b] = context.getImageData(x, y, 1, 1, { colorSpace: 'display-p3' }).data;
+    return [r, g, b];
+}
