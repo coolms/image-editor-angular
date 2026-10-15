@@ -262,8 +262,16 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
             if (this.data.context === 'vfs') {
                 // The pixels and their version from ONE read: the ETag of exactly these bytes is what an overwrite
                 // names, never the listing's version (a separate, earlier read).
+                // And never stale pixels in the first place: the read revalidates any copy the browser holds (the
+                // server answers 304 or the new bytes). `cache` is honoured by the fetch backend; the XHR backend the
+                // admin runs on reads the request's own Cache-Control. If-Match on save stays the backstop.
                 const response = await firstValueFrom(
-                    this.http.get(this.data.node.sourceUrl, { responseType: 'blob', observe: 'response' }),
+                    this.http.get(this.data.node.sourceUrl, {
+                        responseType: 'blob',
+                        observe: 'response',
+                        cache: 'no-cache',
+                        headers: { 'Cache-Control': 'max-age=0' },
+                    }),
                 );
                 this.readVersion.set(versionOf(response.headers.get('ETag')));
                 const blob = response.body ?? new Blob();

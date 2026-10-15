@@ -35,10 +35,25 @@ describe('FabricEngineAdapter -- a saved image keeps the original\'s dimensions'
     });
 
     for (const format of ['png', 'jpeg'] as const) {
-        it(`exports a 640x480 image shown at a quarter of its size as 640x480 (${format})`, async () => {
+        it(`open and save: a 640x480 image shown at a quarter of its size is saved 640x480 (${format})`, async () => {
             engine = await FabricEngineAdapter.create({ container });
             await engine.loadImage(await anImage(640, 480), 'large.png');
             engine.setZoom(0.25);
+
+            const saved = await createImageBitmap(await engine.export(format));
+
+            expect([saved.width, saved.height]).toEqual([640, 480]);
+        });
+
+        it(`open, edit, save: a 640x480 image edited while shown at a quarter of its size is saved 640x480 (${format})`, async () => {
+            engine = await FabricEngineAdapter.create({ container });
+            // Opened from the bytes the read served (a blob, as the host hands them over).
+            await engine.loadImage(await anImage(640, 480), 'large.png');
+            engine.setZoom(0.25);
+            // Edited: a filter on the pixels, and a shape and a text layered over them.
+            await engine.applyFilter('sepia');
+            engine.addShape('rect');
+            engine.addText({ text: 'edited' });
 
             const saved = await createImageBitmap(await engine.export(format));
 

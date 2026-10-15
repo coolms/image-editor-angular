@@ -22,7 +22,7 @@ import type { ImageEditorEngine } from '../engine/image-editor-engine.interface'
  */
 describe('CoolmsImageEditorHost -- the version it saves with is the version of the pixels it opened', () => {
     const SOURCE = '/api/v1/vfs/files/preview?path=%2Fhome%2Fp%2Fpicture.png';
-    let http: HttpTestingController;
+    let http: HttpTestingController | undefined;
     let writes: jasmine.Spy;
 
     /**
@@ -70,7 +70,7 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
     async function open(host: CoolmsImageEditorHostComponent, etag: string | null): Promise<void> {
         const opening = host.ngOnInit();
         const headers: Record<string, string> = etag === null ? {} : { ETag: etag };
-        http.expectOne(SOURCE).flush(new Blob(['the bytes as they are now']), { headers });
+        TestBed.inject(HttpTestingController).expectOne(SOURCE).flush(new Blob(['the bytes as they are now']), { headers });
         await opening;
         const engine = {
             export: async () => new Blob(['edited']),
@@ -79,7 +79,9 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
         host.onEngineReady(engine);
     }
 
-    afterEach(() => http.verify());
+    // Only a case that stood a host up has requests to verify (Jasmine runs the cases in any order).
+    beforeEach(() => (http = undefined));
+    afterEach(() => http?.verify());
 
     it('a file changed after it was listed: the overwrite names the version of the bytes it opened', async () => {
         const host = aHostListedAt('h1');
@@ -110,6 +112,22 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
 
         expect(writes).not.toHaveBeenCalled();
         expect(host.canSaveAs()).withContext('the edits can still go to a new image').toBeTrue();
+    });
+
+    it('the read revalidates the browser\'s copy: a newer file on the server opens with its newer pixels', async () => {
+        // The browser held an older copy (h1); its read asks the server again, which answers the newer bytes (h2).
+        const host = aHostListedAt('h1');
+        const opening = host.ngOnInit();
+        const read = TestBed.inject(HttpTestingController).expectOne(SOURCE);
+        expect(read.request.headers.get('Cache-Control')).withContext('revalidated on the XHR backend').toBe('max-age=0');
+        expect(read.request.cache).withContext('revalidated on the fetch backend').toBe('no-cache');
+        read.flush(new Blob(['the newer bytes']), { headers: { ETag: '"h2"' } });
+        await opening;
+        host.onEngineReady({ export: async () => new Blob(['edited']), hasAlpha: () => false } as unknown as ImageEditorEngine);
+
+        expect(await (await fetch(host.resolvedSourceUrl() ?? '')).text()).withContext('the pixels opened').toBe('the newer bytes');
+        await host.onSave();
+        expect(writes.calls.mostRecent().args[0]).toEqual(jasmine.objectContaining({ ifMatch: 'h2' }));
     });
 
     it('reads an ETag as its version', () => {
