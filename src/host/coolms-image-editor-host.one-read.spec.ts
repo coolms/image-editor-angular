@@ -15,7 +15,7 @@ import { ImageEditorHttpService } from '../services/image-editor-http.service';
 import type { ImageEditorEngine } from '../engine/image-editor-engine.interface';
 
 /**
- * The pixels and the version come from one read (Dmitry, 2026-10-15). The editor opens a file from its own read of
+ * The pixels and the version come from one read. The editor opens a file from its own read of
  * the bytes and names THAT read's version (its ETag) when it saves over the file. The listing's version is a separate,
  * earlier read: a file changed between the listing and the open would otherwise be edited as it is now and saved with
  * the old version -- or, from a cached preview, edited as it was and saved over the newer file.
@@ -171,6 +171,45 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
 
         expect(replaces).not.toHaveBeenCalled();
         expect(host.canSaveAs()).withContext('the edits can still go to a new image').toBeTrue();
+    });
+
+    it('a read that failed opens no editor, and Save is off: nothing is written over the file', async () => {
+        const host = aHostListedAt('h1');
+        const opening = host.ngOnInit();
+        TestBed.inject(HttpTestingController).expectOne(SOURCE).flush(new Blob(['boom']), { status: 500, statusText: 'Server Error' });
+        await opening;
+
+        expect(host.state()).toBe('error');
+        expect(host.resolvedSourceUrl()).withContext('no pixels to edit').toBeNull();
+        expect(host.canSave()).toBeFalse();
+        expect(host.canSaveAs()).withContext('nothing read, nothing to copy').toBeFalse();
+        await host.onSave();
+        expect(writes).not.toHaveBeenCalled();
+    });
+
+    it('bytes that do not decode (empty, cut, not an image) leave Save off, even with a version', async () => {
+        const host = aHostListedAt('h1');
+        const opening = host.ngOnInit();
+        TestBed.inject(HttpTestingController).expectOne(SOURCE).flush(new Blob([]), { headers: { ETag: '"h1"' } });
+        await opening;
+        // The shell could not decode them: it says so, and never hands over an engine.
+        host.onShellError(new Error('Invalid image'));
+
+        expect(host.state()).toBe('error');
+        expect(host.canSave()).toBeFalse();
+        await host.onSave();
+        expect(writes).not.toHaveBeenCalled();
+    });
+
+    it('a media asset whose read failed is never replaced', async () => {
+        const host = aHostForAnAsset(SOURCE);
+        const opening = host.ngOnInit();
+        TestBed.inject(HttpTestingController).expectOne(SOURCE).flush(new Blob(['boom']), { status: 500, statusText: 'Server Error' });
+        await opening;
+
+        expect(host.canSave()).toBeFalse();
+        await host.onSave();
+        expect(replaces).not.toHaveBeenCalled();
     });
 
     it('reads an ETag as its version', () => {
