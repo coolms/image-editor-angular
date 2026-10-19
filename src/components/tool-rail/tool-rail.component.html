@@ -1,0 +1,41 @@
+<nav class="tool-rail" [class.tool-rail--icons]="mode() === 'icons'" [attr.aria-label]="t('imageEditor.rail.title')">
+    <div class="tool-rail__groups">
+        @for (g of registry.groups(); track g.group) {
+            <section class="tool-rail__group" [attr.aria-label]="t(g.labelKey)" [attr.data-group]="g.group">
+                @if (mode() === 'labels') {
+                    <h4 class="tool-rail__group-label">{{ t(g.labelKey) }}</h4>
+                } @else {
+                    <hr class="tool-rail__separator" />
+                }
+                @for (tool of g.tools; track tool.id) {
+                    <button type="button"
+                            class="tool-rail__tool"
+                            [class.tool-rail__tool--active]="isActive(tool.id)"
+                            [attr.data-tool]="tool.id"
+                            [attr.aria-pressed]="isActive(tool.id)"
+                            [attr.aria-label]="t(tool.labelKey)"
+                            [title]="tooltip(tool)"
+                            [disabled]="!state.isReady()"
+                            (click)="select(tool.id)">
+                        <i class="bi" [class]="tool.icon" aria-hidden="true"></i>
+                        @if (mode() === 'labels') {
+                            <span class="tool-rail__label">{{ t(tool.labelKey) }}</span>
+                        }
+                    </button>
+                }
+            </section>
+        }
+    </div>
+
+    <button type="button"
+            class="tool-rail__mode"
+            data-test="rail-mode"
+            [title]="t(mode() === 'labels' ? 'imageEditor.rail.showIcons' : 'imageEditor.rail.showLabels')"
+            [attr.aria-label]="t(mode() === 'labels' ? 'imageEditor.rail.showIcons' : 'imageEditor.rail.showLabels')"
+            (click)="toggleMode()">
+        <i class="bi" [class]="mode() === 'labels' ? 'bi-chevron-bar-left' : 'bi-chevron-bar-right'" aria-hidden="true"></i>
+        @if (mode() === 'labels') {
+            <span class="tool-rail__label">{{ t('imageEditor.rail.showIcons') }}</span>
+        }
+    </button>
+</nav>

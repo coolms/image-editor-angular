@@ -4,7 +4,8 @@ import {
 } from '@angular/core';
 import { TopToolbarComponent }    from './top-toolbar/top-toolbar.component';
 import { CanvasMountComponent }   from './canvas-mount/canvas-mount.component';
-import { RightSidebarComponent }  from './right-sidebar/right-sidebar.component';
+import { ToolRailComponent }      from './tool-rail/tool-rail.component';
+import { PropertiesPanelComponent } from './properties-panel/properties-panel.component';
 import { ImageEditorStateService } from '../services/image-editor-state.service';
 import { ToolRegistryService }    from '../tools/tool-registry.service';
 import { CropToolComponent }      from '../tools/crop/crop-tool.component';
@@ -22,13 +23,17 @@ import type {
 } from '../tools/filter/filter.types';
 import type { ImageEditorEngine }  from '../engine/image-editor-engine.interface';
 import { bindKeys } from '@coolms/ui-angular';
+import { toolForKey } from '../core/tools';
 
 /**
- * Three-pane shell for the CoolMS image editor.
+ * Shell for the CoolMS image editor.
  *
- * Composition: top toolbar (action commands + size badge), canvas
- * mount (centre / left, fills remaining space), right sidebar (tool
- * picker placeholder, 320 px). The footer (Save / Save as / Cancel)
+ * Composition: top toolbar (action commands + size badge); below it the
+ * tool rail on the left (the tools in their groups, with names or as
+ * icons), the canvas mount (fills the remaining space), and the
+ * properties panel on the right (the active tool's, or the image's own
+ * when no tool is active). A tool's shortcut selects it while the editor
+ * has the keyboard. The footer (Save / Save as / Cancel)
  * lives in the host component so the shell can later be embedded in
  * non-dialog contexts (inline editing, side panels) where the save
  * flow looks different.
@@ -49,7 +54,7 @@ import { bindKeys } from '@coolms/ui-angular';
     selector: 'coolms-image-editor',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TopToolbarComponent, CanvasMountComponent, RightSidebarComponent],
+    imports: [TopToolbarComponent, CanvasMountComponent, ToolRailComponent, PropertiesPanelComponent],
     providers: [ImageEditorStateService],
     templateUrl: './coolms-image-editor.component.html',
     styleUrls: ['./coolms-image-editor.component.scss'],
@@ -70,6 +75,7 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
     readonly failed      = output<Error>();
 
     protected readonly state = inject(ImageEditorStateService);
+    private readonly registry = inject(ToolRegistryService);
 
     @ViewChild(CanvasMountComponent, { static: true })
     private readonly canvasMount!: CanvasMountComponent;
@@ -93,26 +99,32 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
         // `providedIn: 'root'`, so registering here is idempotent across
         // multiple shell instances -- re-registering an id replaces the
         // existing entry, and metadata is identical between instances.
-        const registry = inject(ToolRegistryService);
+        const registry = this.registry;
         registry.register({
             id:        'crop',
-            label:     'Crop',
+            labelKey:  'imageEditor.tool.crop',
             icon:      'bi-crop',
-            category:  'transform',
+            group:     'transform',
+            order:     10,
+            shortcut:  'c',
             component: CropToolComponent,
         });
         registry.register({
             id:        'rotate',
-            label:     'Rotate',
+            labelKey:  'imageEditor.tool.rotate',
             icon:      'bi-arrow-clockwise',
-            category:  'transform',
+            group:     'transform',
+            order:     20,
+            shortcut:  'r',
             component: RotateToolComponent,
         });
         registry.register({
             id:        'flip',
-            label:     'Flip',
+            labelKey:  'imageEditor.tool.flip',
             icon:      'bi-symmetry-horizontal',
-            category:  'transform',
+            group:     'transform',
+            order:     30,
+            shortcut:  'f',
             component: FlipToolComponent,
         });
         // beta.4c: Resize joins the Transform group. Sits last because
@@ -120,9 +132,11 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
         // operations are usually run against rather than after.
         registry.register({
             id:        'resize',
-            label:     'Resize',
+            labelKey:  'imageEditor.tool.resize',
             icon:      'bi-aspect-ratio',
-            category:  'transform',
+            group:     'transform',
+            order:     40,
+            shortcut:  'i',
             component: ResizeToolComponent,
         });
         // C.1c: Mask clips the selected layer (or the base image) to a
@@ -130,9 +144,11 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
         // crop / rotate / resize produced.
         registry.register({
             id:        'mask',
-            label:     'Mask',
+            labelKey:  'imageEditor.tool.mask',
             icon:      'bi-mask',
-            category:  'transform',
+            group:     'transform',
+            order:     50,
+            shortcut:  'm',
             component: MaskToolComponent,
         });
 
@@ -140,7 +156,7 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
         // Layers panel for the object stack.
         registry.register({
             id:        'shape',
-            label:     'Shapes',
+            labelKey:  'imageEditor.tool.shape',
             // `bi-shapes` does not exist. Bootstrap Icons has no generic
             // shapes glyph, and a class naming no icon renders nothing at
             // all -- the button kept its label and lost its picture, with no
@@ -148,21 +164,27 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
             // five this tool inserts (rect, ellipse, triangle, line, arrow),
             // so it reads as the group rather than as one of its members.
             icon:      'bi-pentagon',
-            category:  'insert',
+            group:     'insert',
+            order:     10,
+            shortcut:  'u',
             component: ShapeToolComponent,
         });
         registry.register({
             id:        'text',
-            label:     'Text',
+            labelKey:  'imageEditor.tool.text',
             icon:      'bi-fonts',
-            category:  'insert',
+            group:     'insert',
+            order:     20,
+            shortcut:  't',
             component: TextToolComponent,
         });
         registry.register({
             id:        'layers',
-            label:     'Layers',
+            labelKey:  'imageEditor.tool.layers',
             icon:      'bi-stack',
-            category:  'layers',
+            group:     'layers',
+            order:     10,
+            shortcut:  'l',
             component: LayersPanelComponent,
         });
 
@@ -185,12 +207,13 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
               icon: 'bi-cloud', min: 0, max: 1, step: 0.02,
               default: 0, paramKey: 'blur' },
         ];
-        for (const config of sliderFilters) {
+        for (const [index, config] of sliderFilters.entries()) {
             registry.register({
                 id:        `filter-${config.filterName}`,
-                label:     config.label,
+                labelKey:  `imageEditor.tool.filter-${config.filterName}`,
                 icon:      config.icon,
-                category:  'filter',
+                group:     'filter',
+                order:     10 + index,
                 component: SliderFilterComponent,
                 inputs:    { config },
             });
@@ -201,12 +224,13 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
             { type: 'toggle', filterName: 'grayscale', label: 'Grayscale', icon: 'bi-palette-fill' },
             { type: 'toggle', filterName: 'sharpen',   label: 'Sharpen',   icon: 'bi-stars'        },
         ];
-        for (const config of toggleFilters) {
+        for (const [index, config] of toggleFilters.entries()) {
             registry.register({
                 id:        `filter-${config.filterName}`,
-                label:     config.label,
+                labelKey:  `imageEditor.tool.filter-${config.filterName}`,
                 icon:      config.icon,
-                category:  'filter',
+                group:     'filter',
+                order:     50 + index,
                 component: ToggleFilterComponent,
                 inputs:    { config },
             });
@@ -270,6 +294,14 @@ export class CoolmsImageEditorComponent implements AfterViewInit, OnDestroy {
      * nothing selected, or the base image selected, it does nothing. True when it removed a layer.
      */
     onKeydown(event: KeyboardEvent): boolean {
+        // A tool's shortcut selects it, or closes it when it is the active one -- on the editor's layer only, and
+        // never from a field (the keyboard scope keeps a focused field's keys for it).
+        const tool = toolForKey(this.registry.tools(), event);
+        if (tool !== null) {
+            if (!this.state.isReady()) return false;
+            this.state.setActiveTool(this.state.activeTool() === tool.id ? null : tool.id);
+            return true;
+        }
         if (event.key !== 'Delete') return false;
         const engine = this.state.engine();
         const id = engine?.getActiveLayerId() ?? null;

@@ -1,0 +1,36 @@
+<aside class="properties-panel">
+    @if (activeTool(); as active) {
+        <header class="properties-panel__header">
+            <h3 class="properties-panel__title" data-test="panel-title">{{ t(active.labelKey) }}</h3>
+            <button type="button"
+                    class="properties-panel__close"
+                    [attr.aria-label]="t('imageEditor.panel.closeTool')"
+                    [title]="t('imageEditor.panel.closeTool')"
+                    (click)="close()">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </header>
+        <div class="properties-panel__body">
+            <ng-container *ngComponentOutlet="active.component; inputs: active.inputs"></ng-container>
+        </div>
+    } @else {
+        <header class="properties-panel__header">
+            <h3 class="properties-panel__title" data-test="panel-title">{{ t('imageEditor.panel.image') }}</h3>
+        </header>
+        <div class="properties-panel__body">
+            <dl class="properties-panel__facts" data-test="image-properties">
+                @if (state.canvasSize(); as size) {
+                    <dt>{{ t('imageEditor.panel.size') }}</dt>
+                    <dd>{{ t('imageEditor.panel.sizeValue', { width: size.width, height: size.height }) }}</dd>
+                }
+                @if (format()) {
+                    <dt>{{ t('imageEditor.panel.format') }}</dt>
+                    <dd>{{ format() }}</dd>
+                }
+                <dt>{{ t('imageEditor.panel.layers') }}</dt>
+                <dd>{{ state.layers().length }}</dd>
+            </dl>
+            <p class="properties-panel__hint">{{ t('imageEditor.panel.noTool') }}</p>
+        </div>
+    }
+</aside>

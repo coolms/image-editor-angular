@@ -6,7 +6,7 @@ custom `FabricEngineAdapter`, wrapped by a CoolMS-native UI shell.
 ## Status
 
 **Feature-complete on the fabric.js v6 engine.** The shell
-(top toolbar, canvas mount, right sidebar, properties panel) drives
+(top toolbar, tool rail, canvas mount, properties panel) drives
 all editing operations through the engine API. The save flow is
 integrated end-to-end with the Media Library and the VFS file
 manager: open an image asset (or any VFS image file), edit, Save
@@ -135,11 +135,18 @@ Three layers, separated for swappability:
                   (interface)             (this package)             (npm peer dep)
 ```
 
-1. **UI shell** — `<coolms-image-editor>` host component with three
-   panes (top toolbar, canvas mount, right sidebar). Tools register
-   themselves into a `ToolRegistryService`; the right sidebar uses
-   `NgComponentOutlet` with `inputs` to render the active tool's
-   properties panel.
+1. **UI shell** — `<coolms-image-editor>` host component: a top
+   toolbar, then the tool rail on the left, the canvas mount, and the
+   properties panel on the right. Tools register themselves into a
+   `ToolRegistryService` with a definition from `src/core/` (name key,
+   icon, group, order, shortcut) and the component that shows their
+   properties; the panel uses `NgComponentOutlet` with `inputs` to
+   render the active tool's, or the image's own when no tool is
+   active. The rail draws the tools with their names or as icons;
+   the host remembers which (`IMAGE_EDITOR_RAIL_MODE`). The editor's
+   text goes through `IMAGE_EDITOR_TRANSLATOR`, which falls back to
+   the base catalogue (`IMAGE_EDITOR_MESSAGES`). `src/core/` imports
+   no framework, so a React host uses the same tools and text.
 2. **Engine adapter** — `FabricEngineAdapter` implements
    `ImageEditorEngine`. Owns canvas dimensions (no vendor CSS
    auto-fit layer), normalises the public API (lowercase filter
