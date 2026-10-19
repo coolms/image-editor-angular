@@ -74,13 +74,14 @@ export default tseslint.config(
         },
     },
     // src/core holds the editor's tools and text as data, for any host: it imports nothing outside itself -- no
-    // Angular, no fabric, no RxJS. A React host uses it as it is.
+    // Angular, no fabric, no RxJS, no package at all. A React host uses it as it is.
     {
         files: ['src/core/**/*.ts'],
         rules: {
             'no-restricted-imports': ['error', {
                 patterns: [
-                    { group: ['@*/*', '@*', 'fabric', 'fabric/*', 'rxjs', 'rxjs/*'], message: 'src/core imports nothing but itself.' },
+                    // Every package, scoped or bare: anything that is not a relative path.
+                    { regex: '^(?!\\.{1,2}/)', message: 'src/core imports nothing but itself.' },
                     { group: ['../*', '!../core/*'], message: 'src/core imports nothing but itself.' },
                 ],
             }],

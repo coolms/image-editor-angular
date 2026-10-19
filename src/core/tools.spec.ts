@@ -50,8 +50,10 @@ describe('image editor core -- the tools and their text as data', () => {
         expect(baseTranslator('imageEditor.tool.crop')).toBe('Crop');
         expect(baseTranslator('imageEditor.no.such.key')).withContext('a gap shows in development').toBe('imageEditor.no.such.key');
 
-        const t = catalogueTranslator({ 'imageEditor.tool.crop': 'Rogner' });
+        const t = catalogueTranslator({ 'imageEditor.tool.crop': 'Rogner', 'imageEditor.tool.rotate': '' });
         expect(t('imageEditor.tool.crop')).toBe('Rogner');
         expect(t('imageEditor.tool.text')).withContext('the host lacks it: the base English').toBe(IMAGE_EDITOR_MESSAGES['imageEditor.tool.text']);
+        expect(t('imageEditor.tool.rotate')).withContext('the host holds it blank: the base English, not an empty label')
+            .toBe(IMAGE_EDITOR_MESSAGES['imageEditor.tool.rotate']);
     });
 });
