@@ -73,6 +73,19 @@ export default tseslint.config(
             '@typescript-eslint/require-await': 'warn',
         },
     },
+    // src/core holds the editor's tools and text as data, for any host: it imports nothing outside itself -- no
+    // Angular, no fabric, no RxJS. A React host uses it as it is.
+    {
+        files: ['src/core/**/*.ts'],
+        rules: {
+            'no-restricted-imports': ['error', {
+                patterns: [
+                    { group: ['@*/*', '@*', 'fabric', 'fabric/*', 'rxjs', 'rxjs/*'], message: 'src/core imports nothing but itself.' },
+                    { group: ['../*', '!../core/*'], message: 'src/core imports nothing but itself.' },
+                ],
+            }],
+        },
+    },
     { files: ['**/*.html'], ...tseslint.configs.disableTypeChecked },
     {
         files: ['**/*.html'],

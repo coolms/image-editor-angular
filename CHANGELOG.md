@@ -13,6 +13,25 @@ predate this file would be a worse record than not having them.
 
 ### Added
 
+- **A tool rail on the left and a properties panel on the right.** The rail
+  draws the tools in their groups (Transform, Insert, Filters, Layers), with
+  their names or as icons whose names and shortcuts are tooltips; the
+  person switches at its foot, and the host remembers the choice through
+  `IMAGE_EDITOR_RAIL_MODE` (for this page load when it provides none). The
+  active tool is always scrolled into view. The panel shows the active
+  tool's properties under its name, or, with no tool, the image's own: its
+  size, its format and how many layers it has.
+- **Each tool has a shortcut**: C crop, R rotate, F flip, I resize, M mask,
+  U shapes, T text, L layers. A tool's key selects it and, when it is the
+  active one, closes it; only while the editor has the keyboard, never from a
+  field, and never with Ctrl, Alt or Meta.
+- **The editor's text goes through keys.** `IMAGE_EDITOR_TRANSLATOR` answers
+  them; without a host translator the base catalogue's English does
+  (`IMAGE_EDITOR_MESSAGES`), and `catalogueTranslator()` puts a host's
+  catalogue in front of it, never showing a key for a message it lacks.
+- **`src/core/` holds the tools and the text as data, with no framework**, so
+  a React host uses them as they are; a lint rule refuses any import there
+  from outside it.
 - Delete acts on the editor's own selection: it removes the selected shape or
   text layer, and does nothing when nothing, or the base image, is selected.
   It is bound to the editor's own layer through the keyboard scope, so it never
@@ -29,6 +48,9 @@ predate this file would be a worse record than not having them.
 
 ### Changed
 
+- The right sidebar is gone: tools are picked on the rail and their properties
+  shown in the panel. A tool registers a name key, a group, an order and a
+  shortcut instead of a label and a category.
 - The version an overwrite names is the version of the pixels the editor
   opened: the host reads the file's bytes and takes their version from the
   same response (its `ETag`). The listing's version, a separate and earlier

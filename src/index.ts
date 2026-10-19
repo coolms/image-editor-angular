@@ -36,6 +36,17 @@ export type { EngineOptions } from './types/engine-options.types';
 export { CoolmsImageEditorComponent } from './components/coolms-image-editor.component';
 export { ImageEditorStateService, type EditorState } from './services/image-editor-state.service';
 
+// The host's seams: the editor's text (a translator in front of the base catalogue) and where the rail's mode is
+// remembered. The tools and text as data, framework-free.
+export {
+    IMAGE_EDITOR_TRANSLATOR,
+    IMAGE_EDITOR_RAIL_MODE,
+    sessionRailModeStore,
+    type RailModeStore,
+} from './services/image-editor-host-ports';
+export { IMAGE_EDITOR_MESSAGES, baseTranslator, catalogueTranslator, type Translator } from './core/messages';
+export { railModeFrom, DEFAULT_RAIL_MODE, type RailMode, type ToolDefinition, type ToolGroup } from './core/tools';
+
 // CDK Dialog host (beta.3)
 export { CoolmsImageEditorHostComponent } from './host/coolms-image-editor-host.component';
 export type {

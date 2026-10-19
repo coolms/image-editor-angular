@@ -34,7 +34,7 @@ export class ImageEditorStateService {
     readonly canvasSize    = signal<Size | null>(null);
     readonly canUndo       = signal<boolean>(false);
     readonly canRedo       = signal<boolean>(false);
-    /** Tool ID set by the right-sidebar picker. beta.3 leaves this null. */
+    /** The active tool's id, set from the tool rail or a tool's shortcut; null when none is. */
     readonly activeTool    = signal<string | null>(null);
     readonly errorMessage  = signal<string | null>(null);
     /**

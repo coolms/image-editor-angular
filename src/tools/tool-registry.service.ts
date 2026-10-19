@@ -1,5 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
-import type { ToolMetadata, ToolCategory } from './tool.types';
+import { groupTools } from '../core/tools';
+import type { ToolMetadata } from './tool.types';
 
 /**
  * Registry of image-editor tools.
@@ -36,7 +37,6 @@ export class ToolRegistryService {
         return this.toolsMap().get(id);
     }
 
-    byCategory(category: ToolCategory): ToolMetadata[] {
-        return this.tools().filter(t => t.category === category);
-    }
+    /** The rail's groups, in rail order, each with its tools in order; empty groups left out. */
+    readonly groups = computed(() => groupTools(this.tools()));
 }
