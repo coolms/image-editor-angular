@@ -53,9 +53,12 @@ export function fill(text: string, params?: Readonly<Record<string, string | num
 export const baseTranslator: Translator = (key, params) => fill(IMAGE_EDITOR_MESSAGES[key] ?? key, params);
 
 /**
- * A host's catalogue in front of the base one: a key the host does not hold answers the base catalogue's English.
- * A partial translation degrades one message at a time, never to a key.
+ * A host's catalogue in front of the base one: a key the host does not hold, or holds blank, answers the base
+ * catalogue's English. A partial translation degrades one message at a time, never to a key or an empty label.
  */
 export function catalogueTranslator(messages: Readonly<Record<string, string>>): Translator {
-    return (key, params) => fill(messages[key] ?? IMAGE_EDITOR_MESSAGES[key] ?? key, params);
+    return (key, params) => {
+        const own = messages[key];
+        return fill(own === undefined || own === '' ? IMAGE_EDITOR_MESSAGES[key] ?? key : own, params);
+    };
 }

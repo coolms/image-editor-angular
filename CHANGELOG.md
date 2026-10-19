@@ -28,10 +28,11 @@ predate this file would be a worse record than not having them.
 - **The editor's text goes through keys.** `IMAGE_EDITOR_TRANSLATOR` answers
   them; without a host translator the base catalogue's English does
   (`IMAGE_EDITOR_MESSAGES`), and `catalogueTranslator()` puts a host's
-  catalogue in front of it, never showing a key for a message it lacks.
+  catalogue in front of it, never showing a key or an empty label for a
+  message it lacks or holds blank.
 - **`src/core/` holds the tools and the text as data, with no framework**, so
   a React host uses them as they are; a lint rule refuses any import there
-  from outside it.
+  from outside it, and any package at all.
 - Delete acts on the editor's own selection: it removes the selected shape or
   text layer, and does nothing when nothing, or the base image, is selected.
   It is bound to the editor's own layer through the keyboard scope, so it never
