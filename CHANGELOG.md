@@ -49,6 +49,12 @@ predate this file would be a worse record than not having them.
 
 ### Changed
 
+- **`engines.node` names exactly the Node lines CI runs.** It moves from
+  `^22.22.3 || ^24.15.0 || >=26` to `^22.22.3 || ^24.15.0 || ^26.0.0`: Node 27
+  and later are not declared until CI runs them. Within each line the floor is
+  the highest one any package in the lockfile declares. CI checks both, from
+  the matrix and the lockfile. The published code does not change.
+
 - The right sidebar is gone: tools are picked on the rail and their properties
   shown in the panel. A tool registers a name key, a group, an order and a
   shortcut instead of a label and a category.
