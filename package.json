@@ -20,7 +20,7 @@
         "fabric"
     ],
     "engines": {
-        "node": "^22.22.3 || ^24.15.0 || >=26"
+        "node": "^22.22.3 || ^24.15.0 || ^26.0.0"
     },
     "bugs": {
         "url": "https://github.com/coolms/image-editor-angular/issues"
