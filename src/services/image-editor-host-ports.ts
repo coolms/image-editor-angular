@@ -31,3 +31,18 @@ export const IMAGE_EDITOR_RAIL_MODE = new InjectionToken<RailModeStore>('IMAGE_E
     providedIn: 'root',
     factory: sessionRailModeStore,
 });
+
+/** What a failed load or save says when the host gives no reading of the server's answer. */
+export const IMAGE_EDITOR_GENERIC_PROBLEM = 'Something went wrong. Try again.';
+
+/** The sentence for a failed request, from whatever the request threw: the host's reading of the server's answer. */
+export type DescribeProblem = (response: unknown) => string;
+
+/**
+ * How the editor says a failed load or save. A host provides its own reading (the platform's declared-problem rule,
+ * say); without one the editor says {@link IMAGE_EDITOR_GENERIC_PROBLEM}.
+ */
+export const IMAGE_EDITOR_DESCRIBE_PROBLEM = new InjectionToken<DescribeProblem>('IMAGE_EDITOR_DESCRIBE_PROBLEM', {
+    providedIn: 'root',
+    factory: () => () => IMAGE_EDITOR_GENERIC_PROBLEM,
+});

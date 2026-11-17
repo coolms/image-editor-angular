@@ -9,6 +9,21 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
+## Unreleased
+
+### Added
+
+- **`IMAGE_EDITOR_DESCRIBE_PROBLEM`**: how the host says a failed load or save. It is a `DescribeProblem`,
+  `(response: unknown) => string`, read from whatever the request threw. A host provides its own reading, such as the
+  platform's declared-problem rule; without one the editor says `IMAGE_EDITOR_GENERIC_PROBLEM` ("Something went wrong.
+  Try again."). The editor takes no dependency on the platform for it.
+
+### Changed
+
+- A failed load or save says the host's sentence. The editor's own words for a status ("permission denied (403)",
+  "asset not found (404)", "a file already exists at that name (409)", "HTTP <status>", "network error") and their
+  "Failed to load image:" and "Save failed:" prefixes are gone.
+
 ## 2.0.0-alpha.4 -- 2026-10-22
 
 ### Added

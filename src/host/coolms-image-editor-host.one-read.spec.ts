@@ -1,3 +1,4 @@
+import type { Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -13,6 +14,7 @@ import { CoolmsImageEditorHostComponent, versionOf } from './coolms-image-editor
 import { CoolmsImageEditorHostData } from './coolms-image-editor-host.types';
 import { ImageEditorHttpService } from '../services/image-editor-http.service';
 import type { ImageEditorEngine } from '../engine/image-editor-engine.interface';
+import { IMAGE_EDITOR_DESCRIBE_PROBLEM, IMAGE_EDITOR_GENERIC_PROBLEM } from '../services/image-editor-host-ports';
 
 /**
  * The pixels and the version come from one read. The editor opens a file from its own read of
@@ -30,7 +32,7 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
      * A host for a file whose LISTING said version h1. The listing's version reaches the host only on an untyped
      * object, the way a caller holding it could still pass it: the host must not read it.
      */
-    function aHostListedAt(listingVersion: string): CoolmsImageEditorHostComponent {
+    function aHostListedAt(listingVersion: string, extra: Provider[] = []): CoolmsImageEditorHostComponent {
         const listed = {
             path: '/home/p/picture.png',
             id: 'n1',
@@ -42,7 +44,7 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
             parentPath: '/home/p',
             dimensions: null,
         };
-        return aHost({ context: 'vfs', node: listed } as CoolmsImageEditorHostData);
+        return aHost({ context: 'vfs', node: listed } as CoolmsImageEditorHostData, extra);
     }
 
     /** A host for a media asset whose bytes and version are read from $sourceUrl (or from its public URL alone). */
@@ -61,7 +63,7 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
         });
     }
 
-    function aHost(data: CoolmsImageEditorHostData): CoolmsImageEditorHostComponent {
+    function aHost(data: CoolmsImageEditorHostData, extra: Provider[] = []): CoolmsImageEditorHostComponent {
         writes = jasmine.createSpy('writeVfsFile').and.resolveTo({});
         replaces = jasmine.createSpy('replaceMediaAsset').and.resolveTo({ id: 'a1' });
         TestBed.configureTestingModule({
@@ -77,6 +79,7 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
                 { provide: EscCoordinatorService, useValue: { register: () => () => undefined } },
                 { provide: ConfirmDialogService, useValue: { open: () => of(true) } },
                 { provide: UnsavedChangesService, useValue: { watch: () => () => undefined } },
+                ...extra,
             ],
         });
         TestBed.overrideComponent(CoolmsImageEditorHostComponent, {
@@ -180,11 +183,27 @@ describe('CoolmsImageEditorHost -- the version it saves with is the version of t
         await opening;
 
         expect(host.state()).toBe('error');
+        expect(host.errorMessage()).withContext('no host reading: the generic sentence').toBe(IMAGE_EDITOR_GENERIC_PROBLEM);
         expect(host.resolvedSourceUrl()).withContext('no pixels to edit').toBeNull();
         expect(host.canSave()).toBeFalse();
         expect(host.canSaveAs()).withContext('nothing read, nothing to copy').toBeFalse();
         await host.onSave();
         expect(writes).not.toHaveBeenCalled();
+    });
+
+    it('a read that failed says the host\'s reading of the server\'s answer', async () => {
+        const said: unknown[] = [];
+        const describe = (response: unknown): string => {
+            said.push(response);
+            return 'The image is not there any more.';
+        };
+        const host = aHostListedAt('h1', [{ provide: IMAGE_EDITOR_DESCRIBE_PROBLEM, useValue: describe }]);
+        const opening = host.ngOnInit();
+        TestBed.inject(HttpTestingController).expectOne(SOURCE).flush(new Blob(['gone']), { status: 404, statusText: 'Not Found' });
+        await opening;
+
+        expect(host.errorMessage()).toBe('The image is not there any more.');
+        expect(said.length).withContext('the host read the failure once').toBe(1);
     });
 
     it('bytes that do not decode (empty, cut, not an image) leave Save off, even with a version', async () => {
