@@ -41,7 +41,10 @@ export { ImageEditorStateService, type EditorState } from './services/image-edit
 export {
     IMAGE_EDITOR_TRANSLATOR,
     IMAGE_EDITOR_RAIL_MODE,
+    IMAGE_EDITOR_DESCRIBE_PROBLEM,
+    IMAGE_EDITOR_GENERIC_PROBLEM,
     sessionRailModeStore,
+    type DescribeProblem,
     type RailModeStore,
 } from './services/image-editor-host-ports';
 export { IMAGE_EDITOR_MESSAGES, baseTranslator, catalogueTranslator, type Translator } from './core/messages';

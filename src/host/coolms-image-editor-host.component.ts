@@ -27,6 +27,7 @@ import {
     VFS_NODE_WATCH,
 } from '@coolms/ui-angular';
 import { ImageEditorHttpService } from '../services/image-editor-http.service';
+import { IMAGE_EDITOR_DESCRIBE_PROBLEM } from '../services/image-editor-host-ports';
 
 type HostState = 'preparing' | 'editing' | 'saving' | 'error';
 
@@ -87,6 +88,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
     private readonly dialogRef   = inject<DialogRef<CoolmsImageEditorHostResult>>(DialogRef);
     private readonly editService = inject(ImageEditorHttpService);
     private readonly toast       = inject(ToastService);
+    private readonly describeProblem = inject(IMAGE_EDITOR_DESCRIBE_PROBLEM);
     private readonly http        = inject(HttpClient);
     private readonly esc         = inject(EscCoordinatorService);
     private readonly confirm     = inject(ConfirmDialogService);
@@ -312,7 +314,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
             this.state.set('editing');
         } catch (err) {
             this.state.set('error');
-            this.errorMessage.set('Failed to load image: ' + this.describeError(err));
+            this.errorMessage.set(this.describeProblem(err));
         }
     }
 
@@ -448,7 +450,7 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
                 await this.onSaveAs();
                 return;
             }
-            this.toast.error('Save failed: ' + this.describeError(error));
+            this.toast.error(this.describeProblem(error));
             console.error('CoolmsImageEditorHost save failed:', error);
         }
     }
@@ -531,30 +533,6 @@ export class CoolmsImageEditorHostComponent implements OnInit, OnDestroy {
             filename:  finalName,
         });
         return { kind: 'saved', mode: 'save_as_new', vfsPath: newPath };
-    }
-
-    /**
-     * Pull a user-readable message out of whatever the HTTP layer
-     * threw at us. Angular's `HttpErrorResponse` implements the
-     * `Error` interface but doesn't extend the class, so a plain
-     * `instanceof Error` check misses it and we'd fall through to
-     * "unknown error".
-     */
-    private describeError(error: unknown): string {
-        if (error !== null && typeof error === 'object') {
-            const status = (error as { status?: unknown }).status;
-            if (typeof status === 'number') {
-                if (status === 403) return 'permission denied (403)';
-                if (status === 404) return 'asset not found (404)';
-                if (status === 409) return 'a file already exists at that name (409)';
-                if (status === 0)   return 'network error';
-                return `HTTP ${status}`;
-            }
-            const message = (error as { message?: unknown }).message;
-            if (typeof message === 'string' && message !== '') return message;
-        }
-        if (error instanceof Error && error.message !== '') return error.message;
-        return 'unknown error';
     }
 
     /**
